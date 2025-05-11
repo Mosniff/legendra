@@ -34,7 +34,6 @@ export const SignIn = () => {
               user: { email: email, password: password },
             });
             if (signInResponse) {
-              console.log(signInResponse);
               const userObject = {
                 email: signInResponse.data.status.user.email,
               };

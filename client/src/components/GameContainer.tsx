@@ -25,7 +25,6 @@ export const GameContainer = () => {
       };
       fetchUser();
     }
-    console.log(userContextState);
   }, []);
   // /User Context
 
