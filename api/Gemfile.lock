@@ -132,6 +132,7 @@ GEM
       activesupport (>= 4.2)
     jwt (2.10.1)
       base64
+    language_server-protocol (3.17.0.5)
     logger (1.7.0)
     loofah (2.24.0)
       crass (~> 1.0.2)
@@ -163,6 +164,7 @@ GEM
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
+    prism (1.4.0)
     psych (5.2.5)
       date
       stringio
@@ -209,6 +211,8 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rake (13.2.1)
+    rbs (3.6.1)
+      logger
     rdoc (6.13.1)
       psych (>= 4.0.0)
     reline (0.6.1)
@@ -233,7 +237,13 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.3)
+    ruby-lsp (0.23.20)
+      language_server-protocol (~> 3.17.0)
+      prism (>= 1.2, < 2.0)
+      rbs (>= 3, < 4)
+      sorbet-runtime (>= 0.5.10782)
     securerandom (0.3.2)
+    sorbet-runtime (0.5.12115)
     sqlite3 (2.0.4)
       mini_portile2 (~> 2.8.0)
     stringio (3.1.7)
@@ -268,6 +278,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 7.1.4)
   rspec-rails
+  ruby-lsp (~> 0.23.20)
   sqlite3 (>= 1.4)
   tzinfo-data
 
