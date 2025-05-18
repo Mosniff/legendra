@@ -1,0 +1,38 @@
+# Root .gitignore for legendra monorepo
+
+# Ruby/Rails (api)
+/api/log/
+/api/tmp/
+/api/vendor/bundle/
+/api/.env
+/api/.DS_Store
+/api/storage/
+/api/coverage/
+/api/.byebug_history
+/api/.yardoc
+/api/doc/
+/api/.rspec_status
+
+# Node/Vite (client)
+/client/node_modules/
+/client/dist/
+/client/.env
+/client/.DS_Store
+
+# General
+*.swp
+*.swo
+.DS_Store
+.env
+.idea/
+.vscode/
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+
+# Ignore test and coverage artifacts
+coverage/
+
+# Ignore editor directories and files
+*.code-workspace
