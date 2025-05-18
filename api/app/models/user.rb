@@ -5,4 +5,10 @@ class User < ApplicationRecord
          jwt_revocation_strategy: self
 
   has_many :games, dependent: :destroy
+
+  def game_slots
+    slots = Array.new(10)
+    games.each { |game| slots[game.slot - 1] = game }
+    slots
+  end
 end
