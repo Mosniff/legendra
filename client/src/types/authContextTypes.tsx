@@ -1,19 +1,16 @@
-import { type UserContextActions } from "@/reducers/UserContextReducer";
-import { type Game } from "@/types/gameContextTypes";
+import { type AuthContextActions } from "@/context/reducers/AuthContextReducer";
 
-export type UserContextType = {
-  state: UserContextState;
-  dispatch: React.Dispatch<UserContextActions>;
+export type AuthContextType = {
+  state: AuthContextState;
+  dispatch: React.Dispatch<AuthContextActions>;
   userService: UserService;
 };
 
-export type UserContextState = {
-  user?: User | null;
+export type AuthContextState = {
   authToken?: string | null;
 };
 
-export enum UserContextActionTypes {
-  SET_USER = "SET_USER",
+export enum AuthContextActionTypes {
   SET_AUTH_TOKEN = "SET_AUTH_TOKEN",
 }
 
@@ -28,4 +25,11 @@ export type UserService = {
 
 // TODO: password encryption
 export type SignInUser = { user: { email: string; password: string } };
-export type User = { email: string; games: Game[] };
+export type User = { email: string; gamesMetadata: GameMetadata[] };
+
+export type GameMetadata = {
+  id: string;
+  slot: SlotNumber;
+};
+
+export type SlotNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;

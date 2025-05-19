@@ -1,9 +1,9 @@
-import { useUserContext } from "@/context/UserContext";
-import { UserContextActionTypes } from "@/types/userContextTypes";
+import { useAuthContext } from "@/context/AuthContext";
+import { AuthContextActionTypes } from "@/types/authContextTypes";
 import { useState } from "react";
 
 export const SignIn = () => {
-  const { dispatch, userService } = useUserContext();
+  const { dispatch, userService } = useAuthContext();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   return (
@@ -34,15 +34,8 @@ export const SignIn = () => {
               user: { email: email, password: password },
             });
             if (signInResponse) {
-              const userObject = {
-                email: signInResponse.data.status.user.email,
-              };
               dispatch({
-                type: UserContextActionTypes.SET_USER,
-                payload: userObject,
-              });
-              dispatch({
-                type: UserContextActionTypes.SET_AUTH_TOKEN,
+                type: AuthContextActionTypes.SET_AUTH_TOKEN,
                 payload: signInResponse.headers.authorization,
               });
               localStorage.setItem(

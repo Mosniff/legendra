@@ -1,4 +1,4 @@
-import { type SignInUser, type User } from "@/types/userContextTypes";
+import { type SignInUser, type User } from "@/types/authContextTypes";
 import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -38,7 +38,10 @@ export const getUser = async (authToken: string): Promise<User | null> => {
       headers: { Authorization: authToken },
     });
     console.log("response in getUser", response);
-    return { email: response.data.user.email, games: response.data.games };
+    return {
+      email: response.data.user.email,
+      gamesMetadata: response.data.games,
+    };
   } catch (err) {
     console.log("error in getUser", err);
     return null;

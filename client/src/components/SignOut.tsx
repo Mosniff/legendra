@@ -1,18 +1,14 @@
-import { useUserContext } from "@/context/UserContext";
-import { UserContextActionTypes } from "@/types/userContextTypes";
+import { useAuthContext } from "@/context/AuthContext";
+import { AuthContextActionTypes } from "@/types/authContextTypes";
 
 export const SignOut = () => {
-  const { state: userContextState, dispatch, userService } = useUserContext();
+  const { state: userContextState, dispatch, userService } = useAuthContext();
   return (
     <button
       onClick={() => {
         userService.signOut(userContextState.authToken || "no token found");
         dispatch({
-          type: UserContextActionTypes.SET_USER,
-          payload: null,
-        });
-        dispatch({
-          type: UserContextActionTypes.SET_AUTH_TOKEN,
+          type: AuthContextActionTypes.SET_AUTH_TOKEN,
           payload: null,
         });
         localStorage.removeItem("authToken");

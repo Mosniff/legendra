@@ -1,81 +1,91 @@
-import { useUserContext } from "@/context/UserContext";
-import { UserContextActionTypes } from "@/types/userContextTypes";
+import { useAuthContext } from "@/context/AuthContext";
+import { AuthContextActionTypes } from "@/types/authContextTypes";
 import { useEffect } from "react";
 import { SignIn } from "@/components/SignIn";
 import { SignUp } from "@/components/SignUp";
 import { SignOut } from "@/components/SignOut";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 export const GameContainer = () => {
-  // User Context
-  const { state: userContextState, dispatch, userService } = useUserContext();
+  const { state: authContextState, dispatch, userService } = useAuthContext();
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
-    if (storedToken && userContextState.authToken !== storedToken) {
+    if (storedToken && authContextState.authToken !== storedToken) {
       dispatch({
-        type: UserContextActionTypes.SET_AUTH_TOKEN,
+        type: AuthContextActionTypes.SET_AUTH_TOKEN,
         payload: storedToken,
       });
-
-      const fetchUser = async () => {
-        const user = await userService.getUser(storedToken);
-        dispatch({
-          type: UserContextActionTypes.SET_USER,
-          payload: user,
-        });
-      };
-      fetchUser();
     }
   }, []);
-  // /User Context
 
-  const createGame = (slot: number) => {
-    if (userContextState.authToken) {
-      userService.createGame(userContextState.authToken, slot);
-    }
-  };
+  const {
+    data: user,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => userService.getUser(authContextState.authToken!),
+    enabled: !!authContextState.authToken,
+  });
+
+  const createGameMutation = useMutation({
+    mutationFn: (slot: number) =>
+      userService.createGame(authContextState.authToken!, slot),
+    onSuccess: () => {
+      refetch();
+    },
+  });
 
   return (
     <div>
-      {userContextState.user && userContextState.authToken && (
-        <div>
-          <SignOut />
-        </div>
-      )}
-      {(!userContextState.user || !userContextState.authToken) && (
-        <div>
-          <SignIn />
-          <SignUp />
-        </div>
-      )}
-      {userContextState.user && (
+      {isLoading && <div>Loading...</div>}
+      {!isLoading && (
         <>
-          <div>Signed in user: {userContextState.user?.email}</div>
+          {user && authContextState.authToken && (
+            <div>
+              <SignOut />
+            </div>
+          )}
+          {(!user || !authContextState.authToken) && (
+            <div>
+              <SignIn />
+              <SignUp />
+            </div>
+          )}
+          {user && (
+            <>
+              <div>Signed in user: {user?.email}</div>
 
-          <div>Games:</div>
-          {[...Array(10)].map((_, i) => {
-            let game = null;
-            game = userContextState.user?.games?.find((g) => g.slot === i);
-            return (
-              <div key={i}>
-                {game ? (
-                  <p>
-                    Slot {i + 1}: Game {game.id}
-                  </p>
-                ) : (
-                  <div className="flex gap-1">
-                    <p>Slot {i + 1}: Empty</p>
-                    <button
-                      onClick={() => {
-                        createGame(i);
-                      }}
-                    >
-                      Create
-                    </button>
+              <div>Games:</div>
+              {[...Array(10)].map((_, i) => {
+                let game = null;
+                game = user.gamesMetadata.find((g) => g.slot === i);
+                return (
+                  <div key={i}>
+                    {game ? (
+                      <p>
+                        Slot {i + 1}: Game {game.id}
+                      </p>
+                    ) : (
+                      <div className="flex gap-1">
+                        <p>Slot {i + 1}: Empty</p>
+                        <button
+                          onClick={() => {
+                            createGameMutation.mutate(i);
+                          }}
+                          disabled={createGameMutation.isPending}
+                        >
+                          {createGameMutation.isPending
+                            ? "Creating..."
+                            : "Create"}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            );
-          })}
+                );
+              })}
+            </>
+          )}
         </>
       )}
     </div>
