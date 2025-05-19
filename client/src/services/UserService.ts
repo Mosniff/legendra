@@ -1,4 +1,4 @@
-import { type SignInUser } from "@/types/userContextTypes";
+import { type SignInUser, type User } from "@/types/userContextTypes";
 import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -32,15 +32,33 @@ export const signOut = async (authToken: string) => {
   }
 };
 
-export const getUser = async (authToken: string) => {
+export const getUser = async (authToken: string): Promise<User | null> => {
   try {
     const response = await axios.get(`${apiUrl}/current_user`, {
       headers: { Authorization: authToken },
     });
     console.log("response in getUser", response);
-    return { email: response.data.email };
+    return { email: response.data.user.email, games: response.data.games };
   } catch (err) {
     console.log("error in getUser", err);
     return null;
   }
 };
+
+export const createGame = async (authToken: string, slot: number) => {
+  try {
+    const response = await axios.post(
+      `${apiUrl}/games`,
+      { slot },
+      {
+        headers: { Authorization: authToken },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.log("error in createGame", err);
+    return null;
+  }
+};
+
+// export const deleteGame = async (authToken: string, gameId: string) => {

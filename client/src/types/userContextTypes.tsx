@@ -1,4 +1,5 @@
 import { type UserContextActions } from "@/reducers/UserContextReducer";
+import { type Game } from "@/types/gameContextTypes";
 
 export type UserContextType = {
   state: UserContextState;
@@ -21,9 +22,10 @@ export type UserService = {
   signUp: (userObject: SignInUser) => any;
   signIn: (userObject: SignInUser) => any;
   signOut: (authToken: string) => any;
-  getUser: (authToken: string) => any;
+  getUser: (authToken: string) => Promise<User | null>;
+  createGame: (authToken: string, slot: number) => any;
 };
 
 // TODO: password encryption
 export type SignInUser = { user: { email: string; password: string } };
-export type User = { email: string };
+export type User = { email: string; games: Game[] };

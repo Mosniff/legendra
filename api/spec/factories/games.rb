@@ -3,6 +3,6 @@
 FactoryBot.define do
   factory :game do
     association :user
-    slot { 1 }
+    slot { 0 }
   end
 end

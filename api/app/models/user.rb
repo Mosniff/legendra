@@ -8,7 +8,7 @@ class User < ApplicationRecord
 
   def game_slots
     slots = Array.new(10)
-    games.each { |game| slots[game.slot - 1] = game }
+    games.each { |game| slots[game.slot] = game }
     slots
   end
 end
