@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Game, type: :model do
@@ -10,6 +12,8 @@ RSpec.describe Game, type: :model do
     expect(game.id).to eq(game.user.game_slots[game.slot].id)
 
     expect(game.game_state).to eq('world_gen')
+
+    expect(game.world).to be_a(World)
   end
 
   it 'does not allow invalid values' do
