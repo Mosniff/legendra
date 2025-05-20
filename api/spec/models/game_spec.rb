@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe Game, type: :model do
+  let(:user) { create(:user) }
+  let(:game1) { create(:game, user: user, slot: 0, active: true) }
+  let(:game2) { create(:game, user: user, slot: 1) }
+
   it 'should initialize correctly' do
     game = create(:game)
     expect(game).to be_valid
@@ -12,6 +16,7 @@ RSpec.describe Game, type: :model do
     expect(game.id).to eq(game.user.game_slots[game.slot].id)
 
     expect(game.game_state).to eq('world_gen')
+    expect(game.active?).to be(false)
 
     expect(game.world).to be_a(World)
   end
@@ -28,5 +33,16 @@ RSpec.describe Game, type: :model do
     user = create(:user)
     10.times { |i| create(:game, user: user, slot: i) }
     expect { create(:game, user: user, slot: 1) }.to raise_error(ActiveRecord::RecordInvalid)
+  end
+
+  it 'only allows one active game per user at a time' do
+    expect(game1.active?).to be(true)
+    expect(game2.active?).to be(false)
+
+    game2.update(active: true)
+    game1.reload
+
+    expect(game1.active?).to be(false)
+    expect(game2.active?).to be(true)
   end
 end

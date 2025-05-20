@@ -9,10 +9,17 @@ class Game < ApplicationRecord
 
   has_one :world, dependent: :destroy
   after_create :create_world
+  before_save :ensure_single_active_game
 
   private
 
   def create_world
     World.create!(game: self)
+  end
+
+  def ensure_single_active_game
+    return unless active_changed? && active?
+
+    user.games.where.not(id: id).where(active: true).update_all(active: false)
   end
 end

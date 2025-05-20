@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_20_201342) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_20_203357) do
   create_table "games", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "slot"
     t.string "game_state", default: "world_gen", null: false
+    t.boolean "active", default: false, null: false
     t.index ["user_id"], name: "index_games_on_user_id"
   end
 
