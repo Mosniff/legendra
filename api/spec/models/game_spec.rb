@@ -15,10 +15,11 @@ RSpec.describe Game, type: :model do
     expect(game.slot).to be_between(0, 9).inclusive
     expect(game.id).to eq(game.user.game_slots[game.slot].id)
 
-    expect(game.game_state).to eq('world_gen')
+    expect(game.game_state).to eq('story_choice')
     expect(game.active?).to be(false)
 
     expect(game.world).to be_a(World)
+    expect(game.story).to be_nil
   end
 
   it 'does not allow invalid values' do
