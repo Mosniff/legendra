@@ -21,6 +21,7 @@ export const authContextReducer = (
         authToken: action.payload,
       };
     default:
+      console.error("Unknown action in authContextReducer:", action);
       throw new Error();
   }
 };
