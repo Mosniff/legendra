@@ -2,3 +2,6 @@ Style/Documentation:
   Enabled: false
 AllCops:
   NewCops: enable
+
+Metrics/BlockLength:
+  Enabled: false
