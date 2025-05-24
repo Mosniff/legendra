@@ -64,4 +64,20 @@ export const createGame = async (authToken: string, slot: number) => {
   }
 };
 
+export const setActiveGame = async (authToken: string, id: number) => {
+  try {
+    const response = await axios.patch(
+      `${apiUrl}/games/${id}`,
+      { active: true },
+      {
+        headers: { Authorization: authToken },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.log("error in setActiveGame", err);
+    return null;
+  }
+};
+
 // export const deleteGame = async (authToken: string, gameId: string) => {

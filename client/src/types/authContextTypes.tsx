@@ -21,6 +21,7 @@ export type UserService = {
   signOut: (authToken: string) => any;
   getUser: (authToken: string) => Promise<User | null>;
   createGame: (authToken: string, slot: number) => any;
+  setActiveGame: (authToken: string, id: string) => any;
 };
 
 // TODO: password encryption
@@ -30,6 +31,7 @@ export type User = { email: string; gamesMetadata: GameMetadata[] };
 export type GameMetadata = {
   id: string;
   slot: SlotNumber;
+  active: boolean;
 };
 
 export type SlotNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;

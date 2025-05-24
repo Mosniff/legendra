@@ -30,6 +30,15 @@ export const GameSelectScreen = () => {
       refetch();
     },
   });
+
+  const setActiveGameMutation = useMutation({
+    mutationFn: (id: string) =>
+      userService.setActiveGame(authContextState.authToken!, id),
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
   return (
     <>
       <div>Games:</div>
@@ -42,9 +51,20 @@ export const GameSelectScreen = () => {
             return (
               <div key={i}>
                 {game ? (
-                  <p>
-                    Slot {i + 1}: Game {game.id}
-                  </p>
+                  <div>
+                    <p>
+                      Slot {i + 1}: Game {game.id}{" "}
+                      {game.active ? "(Active)" : "(Inactive)"}
+                    </p>
+                    <button
+                      onClick={() => {
+                        setActiveGameMutation.mutate(game.id);
+                      }}
+                      disabled={game.active}
+                    >
+                      Set Active
+                    </button>
+                  </div>
                 ) : (
                   <div className="flex gap-1">
                     <p>Slot {i + 1}: Empty</p>
