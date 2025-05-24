@@ -1,9 +1,10 @@
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { GameContainer } from "@/components/GameContainer";
+import { ScreenContainer } from "@/components/ScreenContainer";
 import { AuthContextProvider } from "@/context/AuthContext";
 import * as userService from "@/services/UserService";
 import { AppContextProvider } from "@/context/AppContext";
+import * as gameService from "@/services/GameService";
 
 const queryClient = new QueryClient();
 
@@ -11,8 +12,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider userService={userService}>
-        <AppContextProvider>
-          <GameContainer />
+        <AppContextProvider gameService={gameService}>
+          <ScreenContainer />
         </AppContextProvider>
       </AuthContextProvider>
     </QueryClientProvider>

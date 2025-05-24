@@ -20,13 +20,17 @@ export type UserService = {
   signIn: (userObject: SignInUser) => any;
   signOut: (authToken: string) => any;
   getUser: (authToken: string) => Promise<User | null>;
-  createGame: (authToken: string, slot: number) => any;
-  setActiveGame: (authToken: string, id: string) => any;
+  createGameForUser: (authToken: string, slot: number) => any;
+  setActiveGameForUser: (authToken: string, id: string) => any;
 };
 
 // TODO: password encryption
 export type SignInUser = { user: { email: string; password: string } };
-export type User = { email: string; gamesMetadata: GameMetadata[] };
+export type User = {
+  email: string;
+  gamesMetadata: GameMetadata[];
+  activeGameId: string | null;
+};
 
 export type GameMetadata = {
   id: string;

@@ -1,4 +1,8 @@
-import type { AppContextState, AppContextType } from "@/types/appContextTypes";
+import type {
+  AppContextState,
+  AppContextType,
+  GameService,
+} from "@/types/appContextTypes";
 import { createContext, useContext, useReducer, type ReactNode } from "react";
 import { appContextReducer } from "./reducers/AppContextReducer";
 
@@ -8,11 +12,17 @@ const initialState: AppContextState = {
 
 export const AppContext = createContext<AppContextType | null>(null);
 
-export const AppContextProvider = ({ children }: { children: ReactNode }) => {
+export const AppContextProvider = ({
+  children,
+  gameService,
+}: {
+  children: ReactNode;
+  gameService: GameService;
+}) => {
   const [state, dispatch] = useReducer(appContextReducer, initialState);
 
   return (
-    <AppContext.Provider value={{ state, dispatch }}>
+    <AppContext.Provider value={{ state, dispatch, gameService }}>
       {children}
     </AppContext.Provider>
   );

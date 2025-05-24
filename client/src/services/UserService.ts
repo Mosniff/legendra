@@ -41,6 +41,7 @@ export const getUser = async (authToken: string): Promise<User | null> => {
     return {
       email: response.data.user.email,
       gamesMetadata: response.data.games,
+      activeGameId: response.data.active_game_id,
     };
   } catch (err) {
     console.log("error in getUser", err);
@@ -48,7 +49,7 @@ export const getUser = async (authToken: string): Promise<User | null> => {
   }
 };
 
-export const createGame = async (authToken: string, slot: number) => {
+export const createGameForUser = async (authToken: string, slot: number) => {
   try {
     const response = await axios.post(
       `${apiUrl}/games`,
@@ -64,7 +65,7 @@ export const createGame = async (authToken: string, slot: number) => {
   }
 };
 
-export const setActiveGame = async (authToken: string, id: number) => {
+export const setActiveGameForUser = async (authToken: string, id: string) => {
   try {
     const response = await axios.patch(
       `${apiUrl}/games/${id}`,

@@ -1,54 +1,38 @@
+import { useAppContext } from "@/context/AppContext";
+import { GameMenuScreen } from "@/components/screens/GameMenuScreen";
 import { useAuthContext } from "@/context/AuthContext";
-import { AuthContextActionTypes } from "@/types/authContextTypes";
-import { useEffect } from "react";
-import { SignIn } from "@/components/SignIn";
-import { SignUp } from "@/components/SignUp";
-import { SignOut } from "@/components/SignOut";
+import type { Game } from "@/types/appContextTypes";
 import { useQuery } from "@tanstack/react-query";
-import { GameSelectScreen } from "./screens/GameSelectScreen";
+import { useUserQuery } from "@/services/queryHooks/useUserQuery";
 
 export const GameContainer = () => {
-  const { state: authContextState, dispatch, userService } = useAuthContext();
-  useEffect(() => {
-    const storedToken = localStorage.getItem("authToken");
-    if (storedToken && authContextState.authToken !== storedToken) {
-      dispatch({
-        type: AuthContextActionTypes.SET_AUTH_TOKEN,
-        payload: storedToken,
-      });
-    }
-  }, []);
+  const { state: authContextState } = useAuthContext();
+  const { state: appContextState, gameService } = useAppContext();
+  const { data: user } = useUserQuery();
 
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["user"],
-    queryFn: () => userService.getUser(authContextState.authToken!),
+  const { data: game, isLoading: isLoadingGame } = useQuery<Game | null>({
+    queryKey: ["game"],
+    queryFn: () =>
+      user?.activeGameId
+        ? gameService.getGame(authContextState.authToken!, user.activeGameId)
+        : Promise.resolve(null),
     enabled: !!authContextState.authToken,
   });
 
   return (
-    <div>
-      {isLoading && <div>Loading...</div>}
-      {!isLoading && (
+    <>
+      {isLoadingGame && (
+        <div>
+          <h1>Loading Game...</h1>
+        </div>
+      )}
+      {game && (
         <>
-          {user && authContextState.authToken && (
-            <div>
-              <SignOut />
-            </div>
+          {appContextState.currentScreen === "Game Menu" && (
+            <GameMenuScreen game={game} />
           )}
-          {(!user || !authContextState.authToken) && (
-            <div>
-              <SignIn />
-              <SignUp />
-            </div>
-          )}
-          {user && (
-            <>
-              <div>Signed in user: {user?.email}</div>
-            </>
-          )}
-          <GameSelectScreen />
         </>
       )}
-    </div>
+    </>
   );
 };

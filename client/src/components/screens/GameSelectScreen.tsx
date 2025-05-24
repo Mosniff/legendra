@@ -1,43 +1,46 @@
-import { useAuthContext } from "@/context/AuthContext";
-import { AuthContextActionTypes, type User } from "@/types/authContextTypes";
 import { useEffect } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useAuthContext } from "@/context/AuthContext";
+import { AuthContextActionTypes } from "@/types/authContextTypes";
+import { useAppContext } from "@/context/AppContext";
+import { AppContextActionTypes } from "@/types/appContextTypes";
+import { useUserQuery } from "@/services/queryHooks/useUserQuery";
 
 export const GameSelectScreen = () => {
-  const { state: authContextState, dispatch, userService } = useAuthContext();
+  const {
+    state: authContextState,
+    dispatch: authContextDispatch,
+    userService,
+  } = useAuthContext();
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
     if (storedToken && authContextState.authToken !== storedToken) {
-      dispatch({
+      authContextDispatch({
         type: AuthContextActionTypes.SET_AUTH_TOKEN,
         payload: storedToken,
       });
     }
   }, []);
 
-  const {
-    data: user,
-    isLoading,
-    refetch,
-  } = useQuery<User>({
-    queryKey: ["user"],
-  });
+  const { data: user, isLoading, refetch: refetchUser } = useUserQuery();
 
   const createGameMutation = useMutation({
     mutationFn: (slot: number) =>
-      userService.createGame(authContextState.authToken!, slot),
+      userService.createGameForUser(authContextState.authToken!, slot),
     onSuccess: () => {
-      refetch();
+      refetchUser();
     },
   });
 
   const setActiveGameMutation = useMutation({
     mutationFn: (id: string) =>
-      userService.setActiveGame(authContextState.authToken!, id),
+      userService.setActiveGameForUser(authContextState.authToken!, id),
     onSuccess: () => {
-      refetch();
+      refetchUser();
     },
   });
+
+  const { dispatch: appContextDispatch } = useAppContext();
 
   return (
     <>
@@ -59,10 +62,14 @@ export const GameSelectScreen = () => {
                     <button
                       onClick={() => {
                         setActiveGameMutation.mutate(game.id);
+                        appContextDispatch({
+                          type: AppContextActionTypes.SET_SCREEN,
+                          payload: "Game Menu",
+                        });
                       }}
                       disabled={game.active}
                     >
-                      Set Active
+                      Goto Game
                     </button>
                   </div>
                 ) : (
