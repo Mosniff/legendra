@@ -1,11 +1,14 @@
 import { useAuthContext } from "@/context/AuthContext";
 import { AuthContextActionTypes } from "@/types/authContextTypes";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const SignIn = () => {
   const { dispatch, userService } = useAuthContext();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
+  const queryClient = useQueryClient();
+
   return (
     <div>
       Sign In:
@@ -42,6 +45,7 @@ export const SignIn = () => {
                 "authToken",
                 signInResponse.headers.authorization
               );
+              queryClient.invalidateQueries({ queryKey: ["user"] });
             }
           }
         }}

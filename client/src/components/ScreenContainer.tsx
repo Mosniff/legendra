@@ -1,6 +1,6 @@
 import { useAuthContext } from "@/context/AuthContext";
 import { AuthContextActionTypes } from "@/types/authContextTypes";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SignIn } from "@/components/SignIn";
 import { SignUp } from "@/components/SignUp";
 import { SignOut } from "@/components/SignOut";
@@ -21,34 +21,46 @@ export const ScreenContainer = () => {
     }
   }, []);
 
+  const [signedIn, setSignedIn] = useState<boolean>(false);
+
   const { data: user, isLoading } = useUserQuery();
   const { state: appContextState } = useAppContext();
+
+  useEffect(() => {
+    setSignedIn(!!user && !!authContextState.authToken);
+  }, [user, authContextState]);
 
   return (
     <div>
       {isLoading && <div>Loading...</div>}
       {!isLoading && (
         <>
-          {user && authContextState.authToken && (
+          {signedIn && (
             <div>
               <SignOut />
             </div>
           )}
-          {(!user || !authContextState.authToken) && (
+          {!signedIn && (
             <div>
               <SignIn />
               <SignUp />
             </div>
           )}
-          {user && (
+          {signedIn && (
             <>
               <div>Signed in user: {user?.email}</div>
             </>
           )}
-          {appContextState.currentScreen === "Game Select" && (
-            <GameSelectScreen />
+          {signedIn && (
+            <>
+              {appContextState.currentScreen === "Game Select" && (
+                <GameSelectScreen />
+              )}
+              {appContextState.currentScreen !== "Game Select" && (
+                <GameContainer />
+              )}
+            </>
           )}
-          {appContextState.currentScreen !== "Game Select" && <GameContainer />}
         </>
       )}
     </div>

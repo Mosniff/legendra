@@ -1,8 +1,10 @@
 import { useAuthContext } from "@/context/AuthContext";
 import { AuthContextActionTypes } from "@/types/authContextTypes";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const SignOut = () => {
   const { state: userContextState, dispatch, userService } = useAuthContext();
+  const queryClient = useQueryClient();
   return (
     <button
       onClick={() => {
@@ -12,6 +14,7 @@ export const SignOut = () => {
           payload: null,
         });
         localStorage.removeItem("authToken");
+        queryClient.invalidateQueries({ queryKey: ["user"] });
       }}
     >
       Logout
