@@ -36,7 +36,12 @@ export const GameSelectScreen = () => {
     mutationFn: (id: string) =>
       userService.setActiveGameForUser(authContextState.authToken!, id),
     onSuccess: () => {
-      refetchUser();
+      refetchUser().then(() => {
+        appContextDispatch({
+          type: AppContextActionTypes.SET_SCREEN,
+          payload: "Game Menu",
+        });
+      });
     },
   });
 
@@ -62,12 +67,7 @@ export const GameSelectScreen = () => {
                     <button
                       onClick={() => {
                         setActiveGameMutation.mutate(game.id);
-                        appContextDispatch({
-                          type: AppContextActionTypes.SET_SCREEN,
-                          payload: "Game Menu",
-                        });
                       }}
-                      disabled={game.active}
                     >
                       Goto Game
                     </button>

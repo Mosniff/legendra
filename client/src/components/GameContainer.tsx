@@ -1,23 +1,10 @@
 import { useAppContext } from "@/context/AppContext";
 import { GameMenuScreen } from "@/components/screens/GameMenuScreen";
-import { useAuthContext } from "@/context/AuthContext";
-import type { Game } from "@/types/appContextTypes";
-import { useQuery } from "@tanstack/react-query";
-import { useUserQuery } from "@/services/queryHooks/useUserQuery";
+import { useGameQuery } from "@/services/queryHooks/useGameQuery";
 
 export const GameContainer = () => {
-  const { state: authContextState } = useAuthContext();
-  const { state: appContextState, gameService } = useAppContext();
-  const { data: user } = useUserQuery();
-
-  const { data: game, isLoading: isLoadingGame } = useQuery<Game | null>({
-    queryKey: ["game"],
-    queryFn: () =>
-      user?.activeGameId
-        ? gameService.getGame(authContextState.authToken!, user.activeGameId)
-        : Promise.resolve(null),
-    enabled: !!authContextState.authToken,
-  });
+  const { state: appContextState } = useAppContext();
+  const { data: game, isLoading: isLoadingGame } = useGameQuery();
 
   return (
     <>
@@ -28,9 +15,7 @@ export const GameContainer = () => {
       )}
       {game && (
         <>
-          {appContextState.currentScreen === "Game Menu" && (
-            <GameMenuScreen game={game} />
-          )}
+          {appContextState.currentScreen === "Game Menu" && <GameMenuScreen />}
         </>
       )}
     </>
