@@ -7,7 +7,7 @@ import { createContext, useContext, useReducer, type ReactNode } from "react";
 import { appContextReducer } from "./reducers/AppContextReducer";
 
 const initialState: AppContextState = {
-  currentScreen: "Game Select",
+  currentScreen: null,
 };
 
 export const AppContext = createContext<AppContextType | null>(null);

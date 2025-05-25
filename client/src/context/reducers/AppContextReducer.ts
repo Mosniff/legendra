@@ -6,7 +6,7 @@ import {
 
 export type SetScreenAction = {
   type: AppContextActionTypes.SET_SCREEN;
-  payload: AppScreen;
+  payload: AppScreen | null;
 };
 
 export type AppContextActions = SetScreenAction;

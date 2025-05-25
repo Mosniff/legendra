@@ -53,9 +53,10 @@ export const ScreenContainer = () => {
           )}
           {signedIn && (
             <>
-              {appContextState.currentScreen === "Game Select" && (
-                <GameSelectScreen />
-              )}
+              {appContextState.currentScreen === "Game Select" ||
+                (appContextState.currentScreen === null && (
+                  <GameSelectScreen />
+                ))}
               {appContextState.currentScreen !== "Game Select" && (
                 <GameContainer />
               )}
