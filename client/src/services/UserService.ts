@@ -81,4 +81,14 @@ export const setActiveGameForUser = async (authToken: string, id: string) => {
   }
 };
 
-// export const deleteGame = async (authToken: string, gameId: string) => {
+export const deleteGameForUser = async (authToken: string, id: string) => {
+  try {
+    const response = await axios.delete(`${apiUrl}/games/${id}`, {
+      headers: { Authorization: authToken },
+    });
+    return response.data;
+  } catch (err) {
+    console.log("error in deleteGame", err);
+    return null;
+  }
+};

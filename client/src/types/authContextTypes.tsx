@@ -22,6 +22,7 @@ export type UserService = {
   getUser: (authToken: string) => Promise<User | null>;
   createGameForUser: (authToken: string, slot: number) => any;
   setActiveGameForUser: (authToken: string, id: string) => any;
+  deleteGameForUser: (authToken: string, id: string) => any;
 };
 
 // TODO: password encryption

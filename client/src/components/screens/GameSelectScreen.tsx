@@ -45,6 +45,14 @@ export const GameSelectScreen = () => {
     },
   });
 
+  const deleteGameMutation = useMutation({
+    mutationFn: (id: string) =>
+      userService.deleteGameForUser(authContextState.authToken!, id),
+    onSuccess: () => {
+      refetchUser();
+    },
+  });
+
   const { dispatch: appContextDispatch } = useAppContext();
 
   return (
@@ -70,6 +78,13 @@ export const GameSelectScreen = () => {
                       }}
                     >
                       Goto Game
+                    </button>
+                    <button
+                      onClick={() => {
+                        deleteGameMutation.mutate(game.id);
+                      }}
+                    >
+                      Delete Game
                     </button>
                   </div>
                 ) : (
