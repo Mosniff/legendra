@@ -6,34 +6,45 @@ export const SignUp = () => {
   const [password, setPassword] = useState<string>();
   const [passwordConfirm, setPasswordConfirm] = useState<string>();
   return (
-    <div>
-      SignupForm
-      <br />
-      email:{" "}
-      <input
-        value={email}
-        onChange={(e) => {
-          e.preventDefault;
-          setEmail(e.target.value);
-        }}
-      />
-      password:{" "}
-      <input
-        value={password}
-        onChange={(e) => {
-          e.preventDefault;
-          setPassword(e.target.value);
-        }}
-      />
-      passwordConfirm:{" "}
-      <input
-        value={passwordConfirm}
-        onChange={(e) => {
-          e.preventDefault;
-          setPasswordConfirm(e.target.value);
-        }}
-      />
+    <div className="flex flex-col gap-2 flex-1">
+      <h2>Sign Up:</h2>
+      <div className="flex justify-between">
+        <span>email:</span>
+        <div>
+          <input
+            className="bg-white"
+            value={email}
+            onChange={(e) => {
+              e.preventDefault;
+              setEmail(e.target.value);
+            }}
+          />
+        </div>
+      </div>
+      <div className="flex justify-between">
+        <span>password:</span>
+        <input
+          className="bg-white"
+          value={password}
+          onChange={(e) => {
+            e.preventDefault;
+            setPassword(e.target.value);
+          }}
+        />
+      </div>
+      <div className="flex justify-between">
+        <span>passwordConfirm:</span>
+        <input
+          className="bg-white"
+          value={passwordConfirm}
+          onChange={(e) => {
+            e.preventDefault;
+            setPasswordConfirm(e.target.value);
+          }}
+        />
+      </div>
       <button
+        className="bg-red-500 border"
         disabled={
           password !== passwordConfirm ||
           !(email && password && passwordConfirm)

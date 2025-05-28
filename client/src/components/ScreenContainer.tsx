@@ -1,57 +1,32 @@
-import { useAuthContext } from "@/context/AuthContext";
-import { AuthContextActionTypes } from "@/types/authContextTypes";
-import { useEffect, useState } from "react";
 import { SignIn } from "@/components/SignIn";
 import { SignUp } from "@/components/SignUp";
-import { SignOut } from "@/components/SignOut";
 import { GameSelectScreen } from "./screens/GameSelectScreen";
 import { useAppContext } from "@/context/AppContext";
 import { GameContainer } from "@/components/GameContainer";
 import { useUserQuery } from "@/services/queryHooks/useUserQuery";
+import { useEffect } from "react";
 
 export const ScreenContainer = () => {
-  const { state: authContextState, dispatch } = useAuthContext();
-  useEffect(() => {
-    const storedToken = localStorage.getItem("authToken");
-    if (storedToken && authContextState.authToken !== storedToken) {
-      dispatch({
-        type: AuthContextActionTypes.SET_AUTH_TOKEN,
-        payload: storedToken,
-      });
-    }
-  }, []);
-
-  const [signedIn, setSignedIn] = useState<boolean>(false);
-
-  const { data: user, isLoading } = useUserQuery();
+  const { data: user, isLoading: isLoadingUser } = useUserQuery();
   const { state: appContextState } = useAppContext();
 
   useEffect(() => {
-    setSignedIn(!!user && !!authContextState.authToken);
-  }, [user, authContextState]);
+    console.log("user is", user);
+  }, [user]);
 
   return (
-    <div>
-      {isLoading && <div>Loading...</div>}
-      {!isLoading && (
+    <div className="bg-amber-500 w-full h-full p-2">
+      {isLoadingUser && <div>Loading...</div>}
+      {!isLoadingUser && (
         <>
-          {signedIn && (
-            <div>
-              <SignOut />
-            </div>
-          )}
-          {!signedIn && (
-            <div>
+          {!user && (
+            <div className="flex justify-between gap-12">
               <SignIn />
               <SignUp />
             </div>
           )}
-          {signedIn && (
-            <>
-              <div>Signed in user: {user?.email}</div>
-            </>
-          )}
-          {signedIn && (
+
+          {user && (
             <>
               {(appContextState.currentScreen === "Game Select" ||
                 appContextState.currentScreen === null) && <GameSelectScreen />}

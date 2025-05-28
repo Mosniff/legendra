@@ -25,7 +25,7 @@ export const SignOut = () => {
           payload: null,
         });
         localStorage.removeItem("authToken");
-        queryClient.invalidateQueries({ queryKey: ["user"] });
+        queryClient.setQueryData(["user"], null);
       }}
     >
       Logout
