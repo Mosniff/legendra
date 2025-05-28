@@ -4,15 +4,23 @@ import { GameSelectScreen } from "./screens/GameSelectScreen";
 import { useAppContext } from "@/context/AppContext";
 import { GameContainer } from "@/components/GameContainer";
 import { useUserQuery } from "@/services/queryHooks/useUserQuery";
-import { useEffect } from "react";
 
 export const ScreenContainer = () => {
   const { data: user, isLoading: isLoadingUser } = useUserQuery();
   const { state: appContextState } = useAppContext();
 
-  useEffect(() => {
-    console.log("user is", user);
-  }, [user]);
+  let screenComponent;
+  switch (appContextState.currentScreen) {
+    case "Game Select":
+      screenComponent = <GameSelectScreen />;
+      break;
+    case "Game Menu":
+      screenComponent = <GameContainer />;
+      break;
+    default:
+      screenComponent = <GameSelectScreen />;
+      break;
+  }
 
   return (
     <div className="bg-amber-500 w-full h-full p-2">
@@ -26,15 +34,7 @@ export const ScreenContainer = () => {
             </div>
           )}
 
-          {user && (
-            <>
-              {(appContextState.currentScreen === "Game Select" ||
-                appContextState.currentScreen === null) && <GameSelectScreen />}
-              {appContextState.currentScreen !== "Game Select" && (
-                <GameContainer />
-              )}
-            </>
-          )}
+          {user && screenComponent}
         </>
       )}
     </div>
