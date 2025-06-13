@@ -1,8 +1,8 @@
 import { SignIn } from "@/components/SignIn";
 import { SignUp } from "@/components/SignUp";
-import { GameSelectScreen } from "./screens/GameSelectScreen";
+import { GameSelectScreen } from "@/components/screens/GameSelectScreen";
 import { useAppContext } from "@/context/AppContext";
-import { GameContainer } from "@/components/GameContainer";
+import { GameContainer } from "@/components/containers/GameContainer";
 import { useUserQuery } from "@/services/queryHooks/useUserQuery";
 
 export const ScreenContainer = () => {

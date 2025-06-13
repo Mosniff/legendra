@@ -1,5 +1,5 @@
 import { AppHeader } from "@/components/AppHeader";
-import { ScreenContainer } from "@/components/ScreenContainer";
+import { ScreenContainer } from "@/components/containers/ScreenContainer";
 import { useAuthContext } from "@/context/AuthContext";
 import { AuthContextActionTypes } from "@/types/authContextTypes";
 import { useEffect } from "react";
