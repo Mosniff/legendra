@@ -1,4 +1,5 @@
 import type { AppContextActions } from "@/context/reducers/AppContextReducer";
+import type { GameService } from "./gameTypes";
 
 export type AppContextState = {
   currentScreen: AppScreen;
@@ -15,16 +16,3 @@ export enum AppContextActionTypes {
 }
 
 export type AppScreen = "Game Select" | "Game Menu" | null;
-
-export type GameService = {
-  getGame: (authToken: string, id: string) => Promise<Game | null>;
-};
-
-export type Game = {
-  id: string;
-  slot: number;
-  active: boolean;
-  world: GameWorld;
-};
-
-export type GameWorld = {};

@@ -1,6 +1,6 @@
 import { useAppContext } from "@/context/AppContext";
 import { useAuthContext } from "@/context/AuthContext";
-import type { Game } from "@/types/appContextTypes";
+import type { Game } from "@/types/gameTypes";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { useUserQuery } from "@/services/queryHooks/useUserQuery";
 

@@ -1,8 +1,5 @@
-import type {
-  AppContextState,
-  AppContextType,
-  GameService,
-} from "@/types/appContextTypes";
+import type { AppContextState, AppContextType } from "@/types/appContextTypes";
+import type { GameService } from "@/types/gameTypes";
 import { createContext, useContext, useReducer, type ReactNode } from "react";
 import { appContextReducer } from "./reducers/AppContextReducer";
 
