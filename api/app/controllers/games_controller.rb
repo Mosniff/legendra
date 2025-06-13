@@ -40,6 +40,10 @@ class GamesController < ApplicationController
     end
   end
 
+  def scenario_templates
+    render json: ScenarioTemplatePresenter.all
+  end
+
   private
 
   def game_params
