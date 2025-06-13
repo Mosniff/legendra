@@ -1,3 +1,5 @@
+import type { AxiosResponse } from "axios";
+
 export type Game = {
   id: string;
   slot: number;
@@ -11,6 +13,11 @@ export type GameService = {
   getScenarioTemplates: (
     authToken: string
   ) => Promise<ScenarioTemplate[] | null>;
+  setStoryForGame: (
+    authToken: string,
+    id: string,
+    storyKey: string
+  ) => Promise<AxiosResponse | null>;
 };
 
 export type GameWorld = {};

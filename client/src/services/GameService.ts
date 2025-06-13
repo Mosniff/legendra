@@ -1,5 +1,5 @@
 import type { Game, ScenarioTemplate } from "@/types/gameTypes";
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -36,6 +36,21 @@ export const getScenarioTemplates = async (
     return response.data;
   } catch (err) {
     console.log("error in getScenarioTemplates", err);
+    return null;
+  }
+};
+
+export const setStoryForGame = async (
+  authToken: string,
+  id: string,
+  storyKey: string
+): Promise<AxiosResponse | null> => {
+  try {
+    return await axios.post(`${apiUrl}/games/${id}/set_story`, storyKey, {
+      headers: { Authorization: authToken },
+    });
+  } catch (err) {
+    console.log("error in setStoryForGame", err);
     return null;
   }
 };
