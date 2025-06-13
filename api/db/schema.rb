@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_22_205718) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_13_130730) do
   create_table "games", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
@@ -21,11 +21,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_22_205718) do
     t.index ["user_id"], name: "index_games_on_user_id"
   end
 
+  create_table "scenarios", force: :cascade do |t|
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "stories", force: :cascade do |t|
     t.integer "world_id", null: false
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "scenario_id", null: false
+    t.index ["scenario_id"], name: "index_stories_on_scenario_id"
     t.index ["world_id"], name: "index_stories_on_world_id"
   end
 
@@ -51,6 +59,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_22_205718) do
   end
 
   add_foreign_key "games", "users"
+  add_foreign_key "stories", "scenarios"
   add_foreign_key "stories", "worlds"
   add_foreign_key "worlds", "games"
 end

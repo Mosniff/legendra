@@ -1,2 +1,3 @@
-testStory:
+test_story:
   title: Test Story
+  scenario_template_key: test_scenario
