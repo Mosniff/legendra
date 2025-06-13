@@ -46,9 +46,13 @@ export const setStoryForGame = async (
   storyKey: string
 ): Promise<AxiosResponse | null> => {
   try {
-    return await axios.post(`${apiUrl}/games/${id}/set_story`, storyKey, {
-      headers: { Authorization: authToken },
-    });
+    return await axios.patch(
+      `${apiUrl}/games/${id}/set_story`,
+      { story_key: storyKey },
+      {
+        headers: { Authorization: authToken },
+      }
+    );
   } catch (err) {
     console.log("error in setStoryForGame", err);
     return null;

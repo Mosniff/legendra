@@ -21,5 +21,6 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   get 'games/scenario_templates', to: 'games#scenario_templates'
+  patch 'games/:id/set_story', to: 'games#set_story'
   resources :games, only: %i[create update show destroy]
 end

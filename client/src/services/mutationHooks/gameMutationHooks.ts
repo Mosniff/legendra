@@ -1,8 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { useAuthContext } from "@/context/AuthContext";
-import { useUserQuery } from "@/services/queryHooks/useUserQuery";
 import { useAppContext } from "@/context/AppContext";
 import { AppContextActionTypes } from "@/types/appContextTypes";
+import { useUserQuery } from "@/services/queryHooks/useUserQuery";
+import { useGameQuery } from "@/services/queryHooks/useGameQuery";
 
 export const useCreateGameMutation = () => {
   const { state: authContextState, userService } = useAuthContext();
@@ -45,6 +46,20 @@ export const useSetActiveGameMutation = () => {
           payload: "Game Menu",
         });
       });
+    },
+  });
+};
+
+export const useSetStoryForGameMutation = () => {
+  const { state: authContextState } = useAuthContext();
+  const { gameService } = useAppContext();
+  const { refetch: refetchGame } = useGameQuery();
+
+  return useMutation({
+    mutationFn: ({ id, storyKey }: { id: string; storyKey: string }) =>
+      gameService.setStoryForGame(authContextState.authToken!, id, storyKey),
+    onSuccess: () => {
+      refetchGame();
     },
   });
 };

@@ -44,6 +44,15 @@ class GamesController < ApplicationController
     render json: ScenarioTemplatePresenter.all
   end
 
+  def set_story
+    game = current_user.games.find_by(id: params[:id])
+    if game
+      game.world.assign_story_from_template(params[:story_key])
+    else
+      render json: { error: 'Game not found' }, status: :not_found
+    end
+  end
+
   private
 
   def game_params
