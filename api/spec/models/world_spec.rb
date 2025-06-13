@@ -18,5 +18,19 @@ RSpec.describe World, type: :model do
       world.assign_story_from_template(Story.templates.keys.first)
       expect(world.story).to be_a(Story)
     end
+
+    it 'progresses the game state when story is assigned' do
+      expect(game.game_state).to eq('story_choice')
+      world.assign_story_from_template(Story.templates.keys.first)
+      expect(game.game_state).to eq('world_gen')
+    end
+
+    it 'can only assign story in the correct game_state' do
+      world.assign_story_from_template(Story.templates.keys.first)
+      expect(game.game_state).to eq('world_gen')
+      expect do
+        world.assign_story_from_template(Story.templates.keys.first)
+      end.to raise_error(RuntimeError, 'Game state must be story_choice to assign a story.')
+    end
   end
 end
