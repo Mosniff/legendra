@@ -1,21 +1,20 @@
+import {
+  useCreateGameMutation,
+  useDeleteGameMutation,
+  useSetActiveGameMutation,
+} from "@/services/mutationHooks/gameMutationHooks";
 import type { GameMetadata } from "@/types/authContextTypes";
-import type { UseMutationResult } from "@tanstack/react-query";
 
 type GameSelectSlabProps = {
   slotNumber: number;
   game?: GameMetadata;
-  setActiveGameMutation: UseMutationResult<unknown, Error, string, unknown>;
-  deleteGameMutation: UseMutationResult<unknown, Error, string, unknown>;
-  createGameMutation: UseMutationResult<unknown, Error, number, unknown>;
 };
 
-const GameSelectSlab = ({
-  slotNumber,
-  game,
-  setActiveGameMutation,
-  deleteGameMutation,
-  createGameMutation,
-}: GameSelectSlabProps) => {
+const GameSelectSlab = ({ slotNumber, game }: GameSelectSlabProps) => {
+  const createGameMutation = useCreateGameMutation();
+  const setActiveGameMutation = useSetActiveGameMutation();
+  const deleteGameMutation = useDeleteGameMutation();
+
   return (
     <div className="border flex justify-between p-2">
       <div className="flex gap-1 items-center">
