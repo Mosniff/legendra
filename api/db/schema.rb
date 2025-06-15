@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_13_130730) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_15_185531) do
   create_table "games", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
@@ -19,6 +19,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_13_130730) do
     t.string "game_state", default: "story_choice", null: false
     t.boolean "active", default: false, null: false
     t.index ["user_id"], name: "index_games_on_user_id"
+  end
+
+  create_table "maps", force: :cascade do |t|
+    t.integer "world_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["world_id"], name: "index_maps_on_world_id"
   end
 
   create_table "scenarios", force: :cascade do |t|
@@ -35,6 +42,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_13_130730) do
     t.integer "scenario_id", null: false
     t.index ["scenario_id"], name: "index_stories_on_scenario_id"
     t.index ["world_id"], name: "index_stories_on_world_id"
+  end
+
+  create_table "tiles", force: :cascade do |t|
+    t.integer "map_id", null: false
+    t.integer "x_coord"
+    t.integer "y_coord"
+    t.string "terrain"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["map_id"], name: "index_tiles_on_map_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -59,7 +76,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_13_130730) do
   end
 
   add_foreign_key "games", "users"
+  add_foreign_key "maps", "worlds"
   add_foreign_key "stories", "scenarios"
   add_foreign_key "stories", "worlds"
+  add_foreign_key "tiles", "maps"
   add_foreign_key "worlds", "games"
 end

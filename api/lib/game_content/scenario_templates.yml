@@ -1,2 +1,3 @@
 test_scenario:
   title: Test Scenario
+  map_template_key: test_map

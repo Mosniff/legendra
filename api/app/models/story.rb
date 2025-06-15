@@ -24,4 +24,17 @@ class Story < ApplicationRecord
     story_attrs = attrs.except('scenario_template_key', :scenario_template_key)
     new(story_attrs.merge(world: world, scenario: scenario))
   end
+
+  def self.get_map_key_from_story(template_name)
+    attrs = templates[template_name]
+    raise ArgumentError, "Unknown story template: #{template_name}" unless attrs
+
+    scenario_template_key = attrs['scenario_template_key'] || attrs[:scenario_template_key]
+    unless scenario_template_key
+      raise ArgumentError,
+            "Missing scenario_template_key in story template: #{template_name}"
+    end
+
+    Scenario.templates[scenario_template_key]['map_template_key']
+  end
 end
