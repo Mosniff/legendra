@@ -13,10 +13,9 @@ class Map < ApplicationRecord
     raise ArgumentError, "Unknown map template: #{template_name}" unless attrs
 
     map = new(world: world)
-    rows = attrs['tiles']['rows'] || []
-
-    rows.each_with_index do |row, y|
-      row.each_with_index do |terrain, x|
+    attrs['width'].times do |x|
+      attrs['height'].times do |y|
+        terrain = attrs['tiles']['rows'][x][y]['terrain']
         map.tiles.build(x_coord: x, y_coord: y, terrain: terrain)
       end
     end
@@ -24,7 +23,7 @@ class Map < ApplicationRecord
     map
   end
 
-  def get_tile(x, y)
-    tiles.find_by(x_coord: x, y_coord: y)
+  def get_tile(x_coord, y_coord)
+    tiles.find_by(x_coord: x_coord, y_coord: y_coord)
   end
 end

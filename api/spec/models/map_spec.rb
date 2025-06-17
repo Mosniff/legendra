@@ -20,10 +20,8 @@ RSpec.describe Map, type: :model do
 
   describe 'Map Gen' do
     it 'generates the correct tiles according to the story settings' do
-      # TODO
-      # get_tile().terrain = snow
-      # # get_tile().terrain = grassland
-      # # get_tile().terrain = desert
+      expect(map.get_tile(0, 0).terrain).to eq('grassland')
+      expect(map.get_tile(4, 4).terrain).to eq('snow')
     end
   end
 end
