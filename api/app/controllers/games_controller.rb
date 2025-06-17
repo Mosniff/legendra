@@ -47,7 +47,7 @@ class GamesController < ApplicationController
   def set_story
     game = current_user.games.find_by(id: params[:id])
     if game
-      game.world.assign_story_from_template(params[:story_key])
+      game.world.select_story(params[:story_key])
     else
       render json: { error: 'Game not found' }, status: :not_found
     end

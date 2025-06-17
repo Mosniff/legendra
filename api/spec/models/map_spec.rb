@@ -8,7 +8,7 @@ RSpec.describe Map, type: :model do
   let(:map) { world.map }
 
   before do
-    world.select_story(Story.templates.keys.first)
+    world.select_story('test_story')
   end
   it 'initializes correctly' do
     expect(map).to be_valid
