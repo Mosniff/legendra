@@ -23,5 +23,22 @@ RSpec.describe Map, type: :model do
       expect(map.get_tile(0, 0).terrain).to eq('grassland')
       expect(map.get_tile(4, 4).terrain).to eq('snow')
     end
+
+    it 'generates the locations according to the story settings' do
+      location1 = map.get_tile(0, 0).location
+      expect(location1).to be_a(Location)
+      expect(location1.locatable).to be_a(Castle)
+      expect(location1.locatable.name).to eq('Castle A')
+
+      location2 = map.get_tile(4, 4).location
+      expect(location2).to be_a(Location)
+      expect(location2.locatable).to be_a(Castle)
+      expect(location2.locatable.name).to eq('Castle C')
+
+      location3 = map.get_tile(0, 2).location
+      expect(location3).to be_a(Location)
+      expect(location3.locatable).to be_a(Town)
+      expect(location3.locatable.name).to eq('Town A')
+    end
   end
 end

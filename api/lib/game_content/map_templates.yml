@@ -6,14 +6,23 @@ test_map:
       0:
         0:
           terrain: grassland
+          location:
+            type: castle
+            name: Castle A
         1:
           terrain: grassland
         2:
           terrain: grassland
+          location:
+            type: town
+            name: Town A
         3:
           terrain: grassland
         4:
           terrain: grassland
+          location:
+            type: castle
+            name: Castle B
       1:
         0:
           terrain: grassland
@@ -58,3 +67,6 @@ test_map:
           terrain: grassland
         4:
           terrain: snow
+          location:
+            type: castle
+            name: Castle C

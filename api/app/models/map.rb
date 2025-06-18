@@ -15,8 +15,14 @@ class Map < ApplicationRecord
     map = new(world: world)
     attrs['width'].times do |x|
       attrs['height'].times do |y|
-        terrain = attrs['tiles']['rows'][x][y]['terrain']
-        map.tiles.build(x_coord: x, y_coord: y, terrain: terrain)
+        tile_settings = attrs['tiles']['rows'][x][y]
+        tile = map.tiles.build(x_coord: x, y_coord: y, terrain: tile_settings['terrain'])
+        next unless tile_settings['location']
+
+        locatable_type = tile_settings['location']['type']
+        locatable = locatable_type.classify.constantize.create(name: tile_settings['location']['name'])
+        tile.location = Location.create(locatable: locatable)
+        locatable.location = tile.location
       end
     end
 
