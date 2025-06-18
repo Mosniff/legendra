@@ -10,7 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_15_185531) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_18_211320) do
+  create_table "castles", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "games", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
@@ -19,6 +25,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_15_185531) do
     t.string "game_state", default: "story_choice", null: false
     t.boolean "active", default: false, null: false
     t.index ["user_id"], name: "index_games_on_user_id"
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.integer "tile_id", null: false
+    t.string "locatable_type", null: false
+    t.integer "locatable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["locatable_type", "locatable_id"], name: "index_locations_on_locatable"
+    t.index ["tile_id"], name: "index_locations_on_tile_id"
   end
 
   create_table "maps", force: :cascade do |t|
@@ -54,6 +70,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_15_185531) do
     t.index ["map_id"], name: "index_tiles_on_map_id"
   end
 
+  create_table "towns", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -76,6 +98,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_15_185531) do
   end
 
   add_foreign_key "games", "users"
+  add_foreign_key "locations", "tiles"
   add_foreign_key "maps", "worlds"
   add_foreign_key "stories", "scenarios"
   add_foreign_key "stories", "worlds"
