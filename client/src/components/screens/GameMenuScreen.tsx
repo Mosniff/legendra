@@ -23,7 +23,7 @@ export const GameMenuScreen = ({}: {}) => {
         <div>
           <div>
             Game Id: {game.id} Game Slot: {game.slot + 1} Game State:{" "}
-            {game.gameState}
+            {game.gameState} Map Tile Count: {game.map?.tiles.length || 0}
           </div>
           <button
             onClick={() => {
