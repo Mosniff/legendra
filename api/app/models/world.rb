@@ -8,7 +8,7 @@ class World < ApplicationRecord
   def select_story(template_name)
     assign_story_from_template(template_name)
     assign_map_from_template(Story.get_map_key_from_story(template_name))
-    game.update(game_state: 'pre_game')
+    game.update(game_state: 'in_progress')
   end
 
   def assign_story_from_template(template_name)

@@ -6,7 +6,7 @@ class Game < ApplicationRecord
   validates :slot, presence: true, inclusion: { in: 0..9 }
   validates :slot, uniqueness: { scope: :user_id }
 
-  GAME_STATES = %w[story_choice pre_game].freeze
+  GAME_STATES = %w[story_choice in_progress].freeze
   validates :game_state, inclusion: { in: GAME_STATES }
 
   has_one :world, dependent: :destroy

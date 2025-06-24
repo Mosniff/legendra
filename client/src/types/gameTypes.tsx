@@ -18,8 +18,10 @@ export type Game = {
   active: boolean;
   world?: GameWorld;
   map?: GameMap;
-  gameState: string;
+  gameState: GameState;
 };
+
+export type GameState = "story_choice" | "in_progress";
 
 export type GameWorld = {
   id: string;
