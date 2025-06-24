@@ -1,8 +1,8 @@
-import type { Game } from "@/types/gameTypes";
+import type { Game, GameState } from "@/types/gameTypes";
 
 type GetGameApiResponseIncludedType =
   | { type: "world"; attributes: { id: string } }
-  | { type: "map"; attributes: { id: string } }
+  | { type: "map"; attributes: { id: string; width: number; height: number } }
   | {
       type: "tile";
       attributes: { x_coord: number; y_coord: number; terrain: string };
@@ -13,7 +13,7 @@ export interface GetGameApiResponse {
       id: string;
       slot: number;
       active: boolean;
-      game_state: string;
+      game_state: GameState;
     };
   };
   included: GetGameApiResponseIncludedType[];
@@ -38,6 +38,8 @@ export const getGameAdapter = (response: GetGameApiResponse): Game => {
   if (mapResponse) {
     map = {
       id: mapResponse.attributes.id,
+      width: mapResponse.attributes.width,
+      height: mapResponse.attributes.height,
       tiles: tilesResponse.map((tile) => ({
         xCoord: tile.attributes.x_coord,
         yCoord: tile.attributes.y_coord,

@@ -28,7 +28,7 @@ export const GameMenuScreen = ({}: {}) => {
             Back to Game Select
           </button>
           {game.gameState === "story_choice" && <StoryChoice game={game} />}
-          {game.gameState === "in_progress" && <WorldMap />}
+          {game.gameState === "in_progress" && <WorldMap game={game} />}
         </div>
       )}
     </>

@@ -19,6 +19,10 @@ RSpec.describe Map, type: :model do
   end
 
   describe 'Map Gen' do
+    it 'generates with height and width' do
+      expect(map.height).to eq(5)
+      expect(map.width).to eq(5)
+    end
     it 'generates the correct tiles according to the story settings' do
       expect(map.get_tile(0, 0).terrain).to eq('grassland')
       expect(map.get_tile(4, 4).terrain).to eq('snow')

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_18_211320) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_24_044037) do
   create_table "castles", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -41,6 +41,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_18_211320) do
     t.integer "world_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "height"
+    t.integer "width"
     t.index ["world_id"], name: "index_maps_on_world_id"
   end
 

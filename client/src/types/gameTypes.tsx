@@ -29,6 +29,8 @@ export type GameWorld = {
 export type GameMap = {
   id: string;
   tiles: MapTile[];
+  width: number;
+  height: number;
 };
 
 export type MapTile = {

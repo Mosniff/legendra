@@ -12,7 +12,7 @@ class Map < ApplicationRecord
     attrs = templates[template_name]
     raise ArgumentError, "Unknown map template: #{template_name}" unless attrs
 
-    map = new(world: world)
+    map = new(world: world, width: attrs['width'], height: attrs['height'])
     attrs['width'].times do |x|
       attrs['height'].times do |y|
         tile_settings = attrs['tiles']['rows'][x][y]
