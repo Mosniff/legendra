@@ -34,9 +34,22 @@ export type GameMap = {
 };
 
 export type MapTile = {
+  id: string;
   xCoord: number;
   yCoord: number;
   terrain: string;
+  castle?: Castle | null;
+  town?: Town | null;
+};
+
+export type Castle = {
+  id: string;
+  name: string;
+};
+
+export type Town = {
+  id: string;
+  name: string;
 };
 
 export type ScenarioTemplate = {

@@ -1,11 +1,18 @@
-import type { Game, GameState } from "@/types/gameTypes";
+import type { Castle, Game, GameState, Town } from "@/types/gameTypes";
 
 type GetGameApiResponseIncludedType =
   | { type: "world"; attributes: { id: string } }
   | { type: "map"; attributes: { id: string; width: number; height: number } }
   | {
       type: "tile";
-      attributes: { x_coord: number; y_coord: number; terrain: string };
+      attributes: {
+        id: string;
+        x_coord: number;
+        y_coord: number;
+        terrain: string;
+        castle?: Castle;
+        town?: Town;
+      };
     };
 export interface GetGameApiResponse {
   data: {
@@ -41,9 +48,12 @@ export const getGameAdapter = (response: GetGameApiResponse): Game => {
       width: mapResponse.attributes.width,
       height: mapResponse.attributes.height,
       tiles: tilesResponse.map((tile) => ({
+        id: tile.attributes.id,
         xCoord: tile.attributes.x_coord,
         yCoord: tile.attributes.y_coord,
         terrain: tile.attributes.terrain,
+        castle: tile.attributes.castle,
+        town: tile.attributes.town,
       })),
     };
   }
