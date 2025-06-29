@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_24_044037) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_29_165247) do
   create_table "castles", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -44,6 +44,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_24_044037) do
     t.integer "height"
     t.integer "width"
     t.index ["world_id"], name: "index_maps_on_world_id"
+  end
+
+  create_table "routes", force: :cascade do |t|
+    t.integer "location_a_id", null: false
+    t.integer "location_b_id", null: false
+    t.json "path", default: [], null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_a_id", "location_b_id"], name: "index_routes_on_location_a_id_and_location_b_id", unique: true
+    t.index ["location_a_id"], name: "index_routes_on_location_a_id"
+    t.index ["location_b_id"], name: "index_routes_on_location_b_id"
   end
 
   create_table "scenarios", force: :cascade do |t|
@@ -102,6 +113,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_24_044037) do
   add_foreign_key "games", "users"
   add_foreign_key "locations", "tiles"
   add_foreign_key "maps", "worlds"
+  add_foreign_key "routes", "locations", column: "location_a_id"
+  add_foreign_key "routes", "locations", column: "location_b_id"
   add_foreign_key "stories", "scenarios"
   add_foreign_key "stories", "worlds"
   add_foreign_key "tiles", "maps"
