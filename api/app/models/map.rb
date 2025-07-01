@@ -56,6 +56,12 @@ class Map < ApplicationRecord
     tiles.find_by(x_coord: x_coord, y_coord: y_coord)
   end
 
+  def self.check_distance(a_coords, b_coords)
+    (a_x, a_y) = a_coords
+    (b_x, b_y) = b_coords
+    [(a_x - b_x).abs, (a_y - b_y).abs].max
+  end
+
   def routes
     # Collect all routes from all locations, flatten, and remove duplicates
     locations.includes(:routes_as_a, :routes_as_b).flat_map do |location|
