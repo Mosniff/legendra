@@ -3,8 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Story, type: :model do
+  let(:game) { create(:game) }
+  let(:world) { game.world }
   it 'initializes correctly' do
-    world = create(:game).world
     story = Story.build_from_template('test_story', world: world)
 
     expect(story).to be_valid

@@ -1,6 +1,13 @@
 FactoryBot.define do
   factory :location do
-    tile { nil }
-    locatable { nil }
+    association :tile
+
+    trait :with_castle do
+      association :locatable, factory: :castle
+    end
+
+    trait :with_town do
+      association :locatable, factory: :town
+    end
   end
 end
