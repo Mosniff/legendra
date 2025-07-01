@@ -70,3 +70,16 @@ test_map:
           location:
             type: castle
             name: Castle C
+  routes:
+    - from: Castle A
+      to: Town A
+      path: [[0, 1]]
+    - from: Castle A
+      to: Castle C
+      path: [[1, 1], [2, 2], [3, 3]]
+    - from: Town A
+      to: Castle B
+      path: [[0, 3]]
+    - from: Castle B
+      to: Castle C
+      path: [[1, 4], [2, 4], [3, 4]]
