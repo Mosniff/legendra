@@ -35,5 +35,21 @@ class Route < ApplicationRecord
         break
       end
     end
+
+    # Check first tile is adjacent to location_a
+    if location_a && path.first
+      a_coords = [location_a.tile.x_coord, location_a.tile.y_coord]
+      unless Map.check_distance(a_coords, path.first) == 1
+        errors.add(:path, 'must link two locations (path must contain adjacent tiles to A and B)')
+      end
+    end
+
+    # Check last tile is adjacent to location_b
+    return unless location_b && path.last
+
+    b_coords = [location_b.tile.x_coord, location_b.tile.y_coord]
+    return if Map.check_distance(b_coords, path.last) == 1
+
+    errors.add(:path, 'must link two locations (path must contain adjacent tiles to A and B)')
   end
 end

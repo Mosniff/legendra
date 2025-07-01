@@ -4,29 +4,41 @@ require 'rails_helper'
 RSpec.describe Route, type: :model do
   let(:game) { create(:game, :with_story) }
   let(:map) { game.world.map }
-  let(:route1) { map.locations[0].routes[0] }
-  let(:route2) { map.locations[0].routes[1] }
+  let(:location_a) { map.locations[0] }
+  let(:location_b) { map.locations[2] }
+  let(:route) { location_a.routes[0] }
 
   it 'initializes correctly' do
-    expect(route1).to be_valid
+    expect(route).to be_valid
   end
 
-  it 'should error if path is not sequential' do
-    location_a = map.locations.first
-    location_b = map.locations.second
-    invalid_path = [[0, 0], [0, 2]]
+  describe 'Sad Path' do
+    before do
+      invalid_path = [[0, 4], [1, 3], [4, 0]]
+      @bad_route = Route.new(
+        location_a: location_a,
+        location_b: location_b,
+        path: invalid_path
+      )
+    end
+    it 'should error if path is not sequential' do
+      expect(@bad_route).not_to be_valid
+      expect(@bad_route.errors[:path]).to include('must be sequential and adjacent (distance 1 between each step)')
+    end
 
-    route = Route.new(
-      location_a: location_a,
-      location_b: location_b,
-      path: invalid_path
-    )
-
-    expect(route).not_to be_valid
-    expect(route.errors[:path]).to include('must be sequential and adjacent (distance 1 between each step)')
+    it 'should error if it does not start adjacent to the first location ' do
+      expect(@bad_route).not_to be_valid
+      expect(@bad_route.errors[:path]).to include(
+        'must link two locations (path must contain adjacent tiles to A and B)'
+      )
+    end
+    it 'should error if it does not end adjacent to the second location' do
+      expect(@bad_route).not_to be_valid
+      expect(@bad_route.errors[:path]).to include(
+        'must link two locations (path must contain adjacent tiles to A and B)'
+      )
+    end
   end
-
-  pending 'should start adjacent to the first location and end adjacent to the second location'
 
   pending 'should properly reverse its path if the route is being travelled in reverse'
 
