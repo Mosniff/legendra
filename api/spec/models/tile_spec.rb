@@ -5,15 +5,19 @@ require 'rails_helper'
 RSpec.describe Tile, type: :model do
   let(:game) { create(:game, :with_story) }
   let(:map) { game.world.map }
-  let(:first_tile) { map.get_tile(0, 0) }
 
   it 'initializes correctly' do
-    expect(first_tile).to be_valid
+    expect(map.get_tile(0, 0)).to be_valid
   end
 
-  pending 'can detect what routes it is a part of'
-
-  pending 'knows if it is a route tile or not'
+  it 'can detect what routes it is a part of' do
+    route = Route.find_by(
+      location_a_id: map.get_tile(0, 0).location.id,
+      location_b_id: map.get_tile(4, 4).location.id
+    )
+    expect(map.get_tile(2, 2).related_routes.length).to eq(1)
+    expect(map.get_tile(2, 2).related_routes[0].id).to eq(route.id)
+  end
 
   describe 'Map Gen' do
     it 'generates the correct tiles according to the story settings' do

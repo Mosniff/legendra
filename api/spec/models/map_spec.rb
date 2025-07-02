@@ -20,6 +20,4 @@ RSpec.describe Map, type: :model do
       expect(map.width).to eq(5)
     end
   end
-
-  pending 'test every template generates a valid with no errors, tag as slow'
 end

@@ -40,8 +40,6 @@ RSpec.describe Route, type: :model do
     end
   end
 
-  pending 'should properly reverse its path if the route is being travelled in reverse'
-
   describe 'Map Gen' do
     it 'generates the routes according to the story settings' do
       expect(map.routes.count).to eq(4)

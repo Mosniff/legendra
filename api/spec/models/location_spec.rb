@@ -11,11 +11,19 @@ RSpec.describe Location, type: :model do
     expect(location1).to be_valid
   end
 
-  pending 'should be able to grab all associated routes'
+  it 'should be able to grab all associated routes' do
+    expect(location1.routes.length).to eq(2)
+  end
 
-  pending 'should be able to grab all locations it has routes to'
+  it 'should be able to grab all locations it has routes to' do
+    expect(location1.connected_locations.length).to eq(2)
+    expect(location1.connected_locations[0].locatable).to be_a(Town)
+    expect(location1.connected_locations[1].locatable).to be_a(Castle)
+  end
 
-  pending 'should be able to grab a route to a given location'
+  it 'should be able to grab a route to a given location' do
+    expect(location1.get_route_to(location3)).to be_a(Route)
+  end
 
   describe 'Map Gen' do
     it 'generates the locations according to the story settings' do

@@ -74,6 +74,9 @@ RSpec.configure do |config|
       config.default_formatter = 'doc'
     end
 
+    # add --tag slow to the command line to run slow tests
+    config.filter_run_excluding slow: true
+
     # Print the 10 slowest examples and example groups at the
     # end of the spec run, to help surface which specs are running
     # particularly slow.

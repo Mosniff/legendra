@@ -68,4 +68,12 @@ class Map < ApplicationRecord
       location.routes
     end.uniq
   end
+
+  def castles
+    locations.where(locatable_type: 'Castle').map(&:locatable)
+  end
+
+  def towns
+    locations.where(locatable_type: 'Town').map(&:locatable)
+  end
 end

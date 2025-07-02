@@ -13,4 +13,8 @@ class Location < ApplicationRecord
   def connected_locations
     routes.map { |route| route.other_end(self) }
   end
+
+  def get_route_to(location)
+    routes.find { |route| route.other_end(self) == location }
+  end
 end
