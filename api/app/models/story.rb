@@ -21,7 +21,15 @@ class Story < ApplicationRecord
 
     scenario = Scenario.build_from_template(scenario_template_key)
 
-    story_attrs = attrs.except('scenario_template_key', :scenario_template_key)
+    kingdoms_data =
+      Scenario.templates[scenario_template_key]['kingdoms'] ||
+      Scenario.templates[scenario_template_key][:kingdoms] || []
+    kingdoms_data.map do |kingdom_attrs|
+      Kingdom.create!(kingdom_attrs.except('key', :key).merge(world: world))
+    end
+
+    story_attrs = attrs.except('scenario_template_key', :scenario_template_key, 'player_kingdom_key',
+                               :player_kingdom_key)
     new(story_attrs.merge(world: world, scenario: scenario))
   end
 

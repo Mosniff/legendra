@@ -1,3 +1,10 @@
 test_scenario:
   title: Test Scenario
   map_template_key: test_map
+  kingdoms:
+    - key: kingdom_a
+      name: Kingdom A
+    - key: kingdom_b
+      name: Kingdom B
+    - key: kingdom_c
+      name: Kingdom C

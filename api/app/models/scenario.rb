@@ -12,7 +12,7 @@ class Scenario < ApplicationRecord
     attrs = templates[template_name]
     raise ArgumentError, "Unknown scenario template: #{template_name}" unless attrs
 
-    scenario_attrs = attrs.except('map_template_key', :map_template_key)
+    scenario_attrs = attrs.except('map_template_key', :map_template_key, 'kingdoms', :kingdoms)
     new(scenario_attrs)
   end
 end
