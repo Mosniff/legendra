@@ -40,6 +40,7 @@ export type MapTile = {
   terrain: string;
   castle?: Castle | null;
   town?: Town | null;
+  routeTile: boolean;
 };
 
 export type Castle = {

@@ -13,9 +13,10 @@ export const WorldMapTile = ({
   const [tile, setTile] = useState<MapTile | null>();
   useEffect(() => {
     const foundTile = game?.map?.tiles.find(
-      (tile) => tile.xCoord === rowNumber && tile.yCoord === columnNumber
+      (tile) => tile.xCoord === columnNumber && tile.yCoord === rowNumber
     );
     setTile(foundTile);
+    console.log(tile);
   }, [game]);
 
   const terrainColors: { [key: string]: string } = {
@@ -31,6 +32,7 @@ export const WorldMapTile = ({
           className={`h-8 w-8 border flex justify-center items-center ${
             terrainColors[tile.terrain]
           }`}
+          title={`Tile at X:${tile.xCoord}, Y:${tile.yCoord}`}
         >
           {tile.castle && (
             <div
@@ -44,6 +46,7 @@ export const WorldMapTile = ({
               title={`${tile.town.name} Town`}
             />
           )}
+          {tile.routeTile && <div className="h-2 w-2 bg-yellow-300" />}
         </div>
       )}
     </>

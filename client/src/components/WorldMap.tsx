@@ -16,7 +16,7 @@ export const WorldMap = ({ game }: { game: Game }) => {
     <div>
       {game.map && (
         <>
-          {rowNumbers.map((rowNumber) => (
+          {rowNumbers.reverse().map((rowNumber) => (
             <WorldMapRow
               key={rowNumber}
               rowNumber={rowNumber}

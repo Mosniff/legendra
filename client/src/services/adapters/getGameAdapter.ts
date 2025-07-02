@@ -12,6 +12,7 @@ type GetGameApiResponseIncludedType =
         terrain: string;
         castle?: Castle;
         town?: Town;
+        is_route_tile: boolean;
       };
     };
 export interface GetGameApiResponse {
@@ -54,6 +55,7 @@ export const getGameAdapter = (response: GetGameApiResponse): Game => {
         terrain: tile.attributes.terrain,
         castle: tile.attributes.castle,
         town: tile.attributes.town,
+        routeTile: tile.attributes.is_route_tile,
       })),
     };
   }
