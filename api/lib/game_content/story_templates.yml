@@ -1,3 +1,9 @@
 test_story:
   title: Test Story
   scenario_template_key: test_scenario
+  player_kingdom_key: kingdom_a
+
+test_story_2:
+  title: Test Story 2
+  scenario_template_key: test_scenario
+  player_kingdom_key: kingdom_b

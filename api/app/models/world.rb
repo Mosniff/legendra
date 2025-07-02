@@ -25,4 +25,8 @@ class World < ApplicationRecord
     map = Map.build_from_template(template_name, world: self)
     map.save!
   end
+
+  def player_kingdom
+    kingdoms.find_by(is_player_kingdom: true) || raise('No player kingdom found')
+  end
 end
