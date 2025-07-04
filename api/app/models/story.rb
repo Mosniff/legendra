@@ -30,10 +30,17 @@ class Story < ApplicationRecord
       Scenario.templates[scenario_template_key][:kingdoms] || []
     kingdoms_data.map do |kingdom_attrs|
       is_player_kingdom = kingdom_attrs['key'] == attrs['player_kingdom_key']
-      Kingdom.create!(kingdom_attrs.except(
+      kingdom = Kingdom.create!(kingdom_attrs.except(
         'key', :key,
         'generals', :generals
       ).merge(world: world, is_player_kingdom: is_player_kingdom))
+
+      # Create generals for this kingdom
+      (kingdom_attrs['generals'] || []).each do |general_ref|
+        general_key = general_ref['key'] || general_ref[:key]
+        general_attrs = General.templates[general_key]
+        General.create!(general_attrs.merge(world: world, kingdom: kingdom))
+      end
     end
 
     story_attrs = attrs.except('scenario_template_key', :scenario_template_key, 'player_kingdom_key',
