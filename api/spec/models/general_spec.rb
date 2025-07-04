@@ -34,6 +34,15 @@ RSpec.describe General, type: :model do
           ).to be_present, "Expected #{kingdom.name} to have general named #{general_name}"
         end
       end
+
+      # Check independent generals
+      (scenario_template['independent_generals'] || []).each do |general_ref|
+        general_key = general_ref['key'] || general_ref[:key]
+        general_name = general_templates[general_key.to_s]
+        general = world.generals.find_by(name: general_name)
+        expect(general).to be_present, "Expected independent general named #{general_name} to exist"
+        expect(general.kingdom).to be_nil, "Expected independent general #{general_name} to not belong to any kingdom"
+      end
     end
   end
 end

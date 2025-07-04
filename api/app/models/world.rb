@@ -5,6 +5,7 @@ class World < ApplicationRecord
   has_one :story, dependent: :destroy
   has_one :map, dependent: :destroy
   has_many :kingdoms, dependent: :destroy
+  has_many :generals, dependent: :destroy
 
   def select_story(template_name)
     assign_story_from_template(template_name)

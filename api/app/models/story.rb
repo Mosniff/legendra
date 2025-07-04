@@ -24,10 +24,11 @@ class Story < ApplicationRecord
 
     scenario_template_key = get_scenario_template_key(attrs)
     scenario = Scenario.build_from_template(scenario_template_key)
+    scenario_data = Scenario.templates[scenario_template_key]
 
     kingdoms_data =
-      Scenario.templates[scenario_template_key]['kingdoms'] ||
-      Scenario.templates[scenario_template_key][:kingdoms] || []
+      scenario_data['kingdoms'] ||
+      scenario_data[:kingdoms] || []
     kingdoms_data.map do |kingdom_attrs|
       is_player_kingdom = kingdom_attrs['key'] == attrs['player_kingdom_key']
       kingdom = Kingdom.create!(kingdom_attrs.except(
@@ -41,6 +42,13 @@ class Story < ApplicationRecord
         general_attrs = General.templates[general_key]
         General.create!(general_attrs.merge(world: world, kingdom: kingdom))
       end
+    end
+
+    # Create independent generals (not assigned to any kingdom)
+    (scenario_data['independent_generals'] || []).each do |general_ref|
+      general_key = general_ref['key'] || general_ref[:key]
+      general_attrs = General.templates[general_key]
+      General.create!(general_attrs.merge(world: world, kingdom: nil))
     end
 
     story_attrs = attrs.except('scenario_template_key', :scenario_template_key, 'player_kingdom_key',
