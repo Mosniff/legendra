@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_02_181112) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_04_155557) do
   create_table "castles", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -25,6 +25,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_02_181112) do
     t.string "game_state", default: "story_choice", null: false
     t.boolean "active", default: false, null: false
     t.index ["user_id"], name: "index_games_on_user_id"
+  end
+
+  create_table "generals", force: :cascade do |t|
+    t.string "name"
+    t.integer "world_id", null: false
+    t.integer "kingdom_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["kingdom_id"], name: "index_generals_on_kingdom_id"
+    t.index ["world_id"], name: "index_generals_on_world_id"
   end
 
   create_table "kingdoms", force: :cascade do |t|
@@ -120,6 +130,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_02_181112) do
   end
 
   add_foreign_key "games", "users"
+  add_foreign_key "generals", "kingdoms"
+  add_foreign_key "generals", "worlds"
   add_foreign_key "kingdoms", "worlds"
   add_foreign_key "locations", "tiles"
   add_foreign_key "maps", "worlds"
