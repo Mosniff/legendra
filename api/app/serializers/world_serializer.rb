@@ -5,4 +5,6 @@ class WorldSerializer
   attributes :id
 
   has_one :map
+  has_many :kingdoms
+  has_many :generals
 end

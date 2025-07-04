@@ -16,7 +16,9 @@ class GamesController < ApplicationController
   def update
     game = Game.find(params[:id])
     if game.update(game_params)
-      render json: GameSerializer.new(game, include: %i[world world.map world.map.tiles]).serializable_hash
+      render json: GameSerializer.new(game,
+                                      include: %i[world world.map world.map.tiles world.kingdoms
+                                                  world.generals]).serializable_hash
     else
       render json: { errors: game.errors.full_messages }, status: :unprocessable_entity
     end
@@ -25,7 +27,8 @@ class GamesController < ApplicationController
   def show
     game = current_user.games.find_by(id: params[:id])
     if game
-      render json: GameSerializer.new(game, include: %i[world world.map world.map.tiles]).serializable_hash
+      render json: GameSerializer.new(game, include: %i[world world.map world.map.tiles world.kingdoms
+                                                        world.generals]).serializable_hash
     else
       render json: { error: 'Game not found' }, status: :not_found
     end

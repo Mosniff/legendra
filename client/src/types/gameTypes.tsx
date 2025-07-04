@@ -19,6 +19,8 @@ export type Game = {
   world?: GameWorld;
   map?: GameMap;
   gameState: GameState;
+  kingdoms: Kingdom[];
+  generals: General[];
 };
 
 export type GameState = "story_choice" | "in_progress";
@@ -50,6 +52,17 @@ export type Castle = {
 
 export type Town = {
   id: string;
+  name: string;
+};
+
+export type Kingdom = {
+  id: string;
+  name: string;
+};
+
+export type General = {
+  id: string;
+  kingdomId?: string;
   name: string;
 };
 

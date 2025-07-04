@@ -2,7 +2,8 @@ import { useAppContext } from "@/context/AppContext";
 import { useGameQuery } from "@/services/queryHooks/useGameQuery";
 import { AppContextActionTypes } from "@/types/appContextTypes";
 import { WorldMap } from "@/components/WorldMap";
-import { StoryChoice } from "../StoryChoice";
+import { StoryChoice } from "@/components/StoryChoice";
+import { KingdomsList } from "@/components/KingdomsList";
 
 export const GameMenuScreen = ({}: {}) => {
   const { dispatch: appContextDispatch } = useAppContext();
@@ -28,7 +29,12 @@ export const GameMenuScreen = ({}: {}) => {
             Back to Game Select
           </button>
           {game.gameState === "story_choice" && <StoryChoice game={game} />}
-          {game.gameState === "in_progress" && <WorldMap game={game} />}
+          {game.gameState === "in_progress" && (
+            <>
+              <WorldMap game={game} />
+              <KingdomsList game={game} />
+            </>
+          )}
         </div>
       )}
     </>

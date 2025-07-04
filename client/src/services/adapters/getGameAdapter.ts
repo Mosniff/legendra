@@ -14,6 +14,21 @@ type GetGameApiResponseIncludedType =
         town?: Town;
         is_route_tile: boolean;
       };
+    }
+  | {
+      type: "kingdom";
+      attributes: {
+        id: string;
+        name: string;
+      };
+    }
+  | {
+      type: "general";
+      attributes: {
+        id: string;
+        name: string;
+        kingdom_id: string;
+      };
     };
 export interface GetGameApiResponse {
   data: {
@@ -60,6 +75,27 @@ export const getGameAdapter = (response: GetGameApiResponse): Game => {
     };
   }
 
+  const kingdomsResponse = response.included.filter(
+    (included) => included.type == "kingdom"
+  );
+  const kingdoms = kingdomsResponse.map((kingdom) => {
+    return {
+      id: kingdom.attributes.id,
+      name: kingdom.attributes.name,
+    };
+  });
+
+  const generalsResponse = response.included.filter(
+    (included) => included.type == "general"
+  );
+  const generals = generalsResponse.map((general) => {
+    return {
+      id: general.attributes.id,
+      name: general.attributes.name,
+      kingdomId: general.attributes.kingdom_id,
+    };
+  });
+
   return {
     id: response.data.attributes.id,
     slot: response.data.attributes.slot,
@@ -67,5 +103,7 @@ export const getGameAdapter = (response: GetGameApiResponse): Game => {
     gameState: response.data.attributes.game_state,
     world: world,
     map: map,
+    kingdoms: kingdoms,
+    generals: generals,
   };
 };
