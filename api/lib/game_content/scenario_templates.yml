@@ -4,7 +4,22 @@ test_scenario:
   kingdoms:
     - key: kingdom_a
       name: Kingdom A
+      generals:
+        - key: general_1
+        - key: general_2
+        - key: general_3
     - key: kingdom_b
       name: Kingdom B
+      generals:
+        - key: general_4
+        - key: general_5
+        - key: general_6
     - key: kingdom_c
       name: Kingdom C
+      generals:
+        - key: general_7
+        - key: general_8
+        - key: general_9
+  independent_generals:
+    - key: general_10
+    - key: general_11

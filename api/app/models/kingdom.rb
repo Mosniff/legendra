@@ -1,5 +1,6 @@
 class Kingdom < ApplicationRecord
   belongs_to :world
+  has_many :generals
 
   validate :only_one_player_kingdom_per_world
 

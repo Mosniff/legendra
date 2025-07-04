@@ -9,16 +9,20 @@ class Story < ApplicationRecord
     @templates ||= YAML.load_file(Rails.root.join('lib', 'game_content', 'story_templates.yml')).with_indifferent_access
   end
 
-  def self.build_from_template(template_name, world:)
-    attrs = templates[template_name]
-    raise ArgumentError, "Unknown story template: #{template_name}" unless attrs
-
-    scenario_template_key = attrs['scenario_template_key'] || attrs[:scenario_template_key]
+  def self.get_scenario_template_key(story_attrs)
+    scenario_template_key = story_attrs['scenario_template_key'] || story_attrs[:scenario_template_key]
     unless scenario_template_key
       raise ArgumentError,
             "Missing scenario_template_key in story template: #{template_name}"
     end
+    scenario_template_key
+  end
 
+  def self.build_from_template(template_name, world:)
+    attrs = templates[template_name]
+    raise ArgumentError, "Unknown story template: #{template_name}" unless attrs
+
+    scenario_template_key = get_scenario_template_key(attrs)
     scenario = Scenario.build_from_template(scenario_template_key)
 
     kingdoms_data =
@@ -26,7 +30,10 @@ class Story < ApplicationRecord
       Scenario.templates[scenario_template_key][:kingdoms] || []
     kingdoms_data.map do |kingdom_attrs|
       is_player_kingdom = kingdom_attrs['key'] == attrs['player_kingdom_key']
-      Kingdom.create!(kingdom_attrs.except('key', :key).merge(world: world, is_player_kingdom: is_player_kingdom))
+      Kingdom.create!(kingdom_attrs.except(
+        'key', :key,
+        'generals', :generals
+      ).merge(world: world, is_player_kingdom: is_player_kingdom))
     end
 
     story_attrs = attrs.except('scenario_template_key', :scenario_template_key, 'player_kingdom_key',
