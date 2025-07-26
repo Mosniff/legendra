@@ -2,6 +2,10 @@ Style/Documentation:
   Enabled: false
 AllCops:
   NewCops: enable
+  Exclude:
+    - "db/schema.rb"
+    - "vendor/**/*"
+    - "config/**/*"
 
 Metrics/BlockLength:
   Enabled: false
