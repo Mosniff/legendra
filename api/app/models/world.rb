@@ -8,26 +8,10 @@ class World < ApplicationRecord
   has_many :generals, dependent: :destroy
 
   def select_story(template_name)
-    # assign_story_from_template(template_name)
-    # assign_map_from_template(Story.get_map_key_from_story(template_name))
     raise 'Game state must be story_choice to assign a story.' if game.game_state != 'story_choice'
 
     WorldGenerationService.new(game: game, story_template_key: template_name).generate_world!
     game.update(game_state: 'in_progress')
-  end
-
-  def assign_story_from_template(template_name)
-    raise 'Game state must be story_choice to assign a story.' if game.game_state != 'story_choice'
-
-    story = Story.build_from_template(template_name, world: self)
-    story.save!
-  end
-
-  def assign_map_from_template(template_name)
-    raise 'Game state must be story_choice to assign a map.' if game.game_state != 'story_choice'
-
-    map = Map.build_from_template(template_name, world: self)
-    map.save!
   end
 
   def player_kingdom

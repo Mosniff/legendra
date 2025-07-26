@@ -6,10 +6,10 @@ class WorldGenerationService
     @world = game.world
     @story_template_key = story_template_key.to_sym
 
-    @story_template = load_templates('story_templates.yml')[@story_template_key]
-    @scenario_template = load_templates('scenario_templates.yml')[@story_template[:scenario_template_key].to_sym]
-    @map_template = load_templates('map_templates.yml')[@scenario_template[:map_template_key].to_sym]
-    @general_templates = load_templates('general_templates.yml')
+    @story_template = TemplateLoader.load_templates('story_templates.yml')[@story_template_key]
+    @scenario_template = TemplateLoader.load_templates('scenario_templates.yml')[@story_template[:scenario_template_key].to_sym]
+    @map_template = TemplateLoader.load_templates('map_templates.yml')[@scenario_template[:map_template_key].to_sym]
+    @general_templates = TemplateLoader.load_templates('general_templates.yml')
   end
 
   def generate_world!
@@ -24,12 +24,6 @@ class WorldGenerationService
   end
 
   private
-
-  def load_templates(path)
-    YAML.load_file(Rails.root.join('lib', 'game_content', path)).deep_symbolize_keys
-  rescue Errno::ENOENT
-    raise ArgumentError, "Template file not found: #{path}"
-  end
 
   def build_scenario_from_template!
     scenario_attrs = @scenario_template.slice(:title)
@@ -125,61 +119,4 @@ class WorldGenerationService
       path: path
     )
   end
-
-  # def load_story_template
-  #   story_attrs = Story.templates[@story_template_key]
-  #   raise ArgumentError, "Unknown story template: #{@story_template_key}" unless story_attrs
-
-  #   story_attrs
-  # end
-
-  # def build_and_save_scenario(story_attrs)
-  #   scenario_template_key = Story.get_scenario_template_key(story_attrs)
-  #   scenario = Scenario.build_from_template(scenario_template_key)
-  #   scenario.save!
-  #   scenario
-  # end
-
-  # def build_map_from_template(scenario)
-  #   scenario_template_key = scenario.class.templates.key(scenario.attributes)
-  #   map_template_key = Scenario.templates[scenario_template_key]['map_template_key']
-  #   Map.build_from_template(map_template_key, world: @world)
-  # end
-
-  # def build_kingdoms_generals_castles(story_attrs, _scenario)
-  #   scenario_template_key = Story.get_scenario_template_key(story_attrs)
-  #   kingdoms_data = Scenario.templates[scenario_template_key]['kingdoms'] || []
-  #   kingdoms_data.each do |kingdom_attrs|
-  #     is_player_kingdom = kingdom_attrs['key'] == story_attrs['player_kingdom_key']
-  #     kingdom = Kingdom.create!(
-  #       kingdom_attrs.except('key', :key, 'generals', :generals, 'castles', :castles).merge(
-  #         world: @world,
-  #         is_player_kingdom: is_player_kingdom
-  #       )
-  #     )
-  #     (kingdom_attrs['generals'] || []).each do |general_ref|
-  #       general_key = general_ref['key'] || general_ref[:key]
-  #       General.build_from_template(general_key, world: @world, kingdom: kingdom)
-  #     end
-  #     (kingdom_attrs['castles'] || []).each do |castle_attrs|
-  #       Castle.create!(castle_attrs.merge(kingdom: kingdom))
-  #     end
-  #   end
-  # end
-
-  # def build_independent_generals(scenario)
-  #   scenario_template_key = scenario.class.templates.key(scenario.attributes)
-  #   (Scenario.templates[scenario_template_key]['independent_generals'] || []).each do |general_ref|
-  #     general_key = general_ref['key'] || general_ref[:key]
-  #     General.build_from_template(general_key, world: @world, kingdom: nil)
-  #   end
-  # end
-
-  # world
-  # story
-  # scenario
-  # general
-  # castle
-  # kingdom
-  #
 end
