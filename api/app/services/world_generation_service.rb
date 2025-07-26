@@ -4,19 +4,15 @@ class WorldGenerationService
   def initialize(game:, story_template_key:)
     @game = game
     @world = game.world
+    @story_template_key = story_template_key.to_sym
 
-    @story_template ||= load_templates('story_templates.yml')[story_template_key]
-    @scenario_template ||= load_templates('scenario_templates.yml')[@story_template[:scenario_template_key]]
-    @map_template ||= load_templates('map_templates.yml')[@scenario_template[:map_template_key]]
-    @general_templates ||= load_templates('general_templates.yml')
+    @story_template = load_templates('story_templates.yml')[@story_template_key]
+    @scenario_template = load_templates('scenario_templates.yml')[@story_template[:scenario_template_key].to_sym]
+    @map_template = load_templates('map_templates.yml')[@scenario_template[:map_template_key].to_sym]
+    @general_templates = load_templates('general_templates.yml')
   end
 
   def generate_world!
-    # story_attrs = load_story_template
-    # scenario = build_and_save_scenario(story_attrs)
-    # build_map_from_template(scenario)
-    # build_kingdoms_generals_castles(story_attrs, scenario)
-    # build_independent_generals(scenario)
     @scenario = build_scenario_from_template!
     @story = build_story_from_template!
     build_kingdoms_and_generals!
@@ -24,7 +20,6 @@ class WorldGenerationService
     @map = build_map_from_template!
     build_tiles!
     build_routes!
-    @game.update(game_state: 'in_progress')
     @world
   end
 
@@ -52,12 +47,12 @@ class WorldGenerationService
     kingdoms_data = @scenario_template[:kingdoms] || []
     kingdoms_data.map do |kingdom_attrs|
       # Create kingdom
-      is_player_kingdom = kingdom_attrs[:key] == attrs[:player_kingdom_key]
-      kingdom = Kingdom.create!(kingdom_attrs.slice(:name).merge(world: world, is_player_kingdom: is_player_kingdom))
+      is_player_kingdom = kingdom_attrs[:key] == @story_template[:player_kingdom_key]
+      kingdom = Kingdom.create!(kingdom_attrs.slice(:name).merge(world: @world, is_player_kingdom: is_player_kingdom))
 
       # Create generals for this kingdom
       (kingdom_attrs[:generals] || []).each do |general_ref|
-        general_key = general_ref[:key]
+        general_key = general_ref[:key].to_sym
         build_general_from_template!(general_key, kingdom: kingdom)
       end
     end
@@ -65,7 +60,7 @@ class WorldGenerationService
 
   def build_independent_generals!
     (@scenario_template[:independent_generals] || []).each do |general_ref|
-      general_key = general_ref[:key]
+      general_key = general_ref[:key].to_sym
       build_general_from_template!(general_key)
     end
   end
@@ -77,14 +72,14 @@ class WorldGenerationService
 
   def build_map_from_template!
     map_attrs = @map_template.slice(:width, :height)
-    Map.create!(map_attrs)
+    Map.create!(map_attrs.merge(world: @world))
   end
 
   def build_tiles!
     @map.width.times do |x|
       @map.height.times do |y|
         tile_settings = @map_template[:tiles][:rows][x][y]
-        tile = @map.tiles.build(x_coord: x, y_coord: y, terrain: tile_settings[:terrain])
+        tile = @map.tiles.create!(x_coord: x, y_coord: y, terrain: tile_settings[:terrain])
 
         next unless tile_settings[:location]
 
@@ -94,13 +89,15 @@ class WorldGenerationService
   end
 
   def build_location!(tile, tile_settings)
-    # Create either Castle or Town
     locatable_type = tile_settings[:location][:type]
-    locatable = locatable_type.classify.constantize.create(name: tile_settings[:location][:name])
-    location = Location.create(locatable: locatable)
+    # Create the Location first, then the locatable with the location set
+    location = Location.new(tile: tile)
+    locatable = locatable_type.classify.constantize.new(name: tile_settings[:location][:name], location: location)
+    location.locatable = locatable
+    location.save!
+    locatable.save!
 
-    tile.location = location
-    locatable.location = location
+    tile.update!(location: location)
   end
 
   def build_routes!
