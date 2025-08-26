@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_26_131605) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_26_151739) do
+  create_table "armies", force: :cascade do |t|
+    t.integer "kingdom_id", null: false
+    t.integer "world_id", null: false
+    t.integer "x_coord"
+    t.integer "y_coord"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["kingdom_id"], name: "index_armies_on_kingdom_id"
+    t.index ["world_id"], name: "index_armies_on_world_id"
+  end
+
   create_table "castles", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -143,6 +154,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_26_131605) do
     t.index ["game_id"], name: "index_worlds_on_game_id", unique: true
   end
 
+  add_foreign_key "armies", "kingdoms"
+  add_foreign_key "armies", "worlds"
   add_foreign_key "castles", "kingdoms"
   add_foreign_key "games", "users"
   add_foreign_key "garrisons", "castles"
