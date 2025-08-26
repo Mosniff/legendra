@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_05_181324) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_26_131605) do
   create_table "castles", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -33,7 +33,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_05_181324) do
     t.integer "castle_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "kingdom_id"
     t.index ["castle_id"], name: "index_garrisons_on_castle_id"
+    t.index ["kingdom_id"], name: "index_garrisons_on_kingdom_id"
   end
 
   create_table "generals", force: :cascade do |t|
@@ -42,6 +44,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_05_181324) do
     t.integer "kingdom_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "assignable_type"
+    t.integer "assignable_id"
+    t.index ["assignable_type", "assignable_id"], name: "index_generals_on_assignable"
     t.index ["kingdom_id"], name: "index_generals_on_kingdom_id"
     t.index ["world_id"], name: "index_generals_on_world_id"
   end
@@ -141,6 +146,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_05_181324) do
   add_foreign_key "castles", "kingdoms"
   add_foreign_key "games", "users"
   add_foreign_key "garrisons", "castles"
+  add_foreign_key "garrisons", "kingdoms"
   add_foreign_key "generals", "kingdoms"
   add_foreign_key "generals", "worlds"
   add_foreign_key "kingdoms", "worlds"
