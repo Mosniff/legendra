@@ -6,14 +6,18 @@ test_scenario:
       name: Kingdom A
       generals:
         - key: general_1
+          starting_castle: Castle A
         - key: general_2
         - key: general_3
     - key: kingdom_b
       name: Kingdom B
       generals:
         - key: general_4
+          starting_castle: Castle B
         - key: general_5
+          starting_castle: Castle B
         - key: general_6
+          starting_castle: Castle B
     - key: kingdom_c
       name: Kingdom C
       generals:

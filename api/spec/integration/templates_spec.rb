@@ -2,11 +2,10 @@
 
 require 'rails_helper'
 
-GENERAL_TEMPLATES = TemplateLoader.load_templates('general_templates.yml').transform_keys(&:to_s).transform_values do |attrs|
-  attrs['name']
-end
+GENERAL_TEMPLATES = TemplateLoader.load_templates('general_templates.yml')
 STORY_TEMPLATES = TemplateLoader.load_templates('story_templates.yml')
 SCENARIO_TEMPLATES = TemplateLoader.load_templates('scenario_templates.yml')
+MAP_TEMPLATES = TemplateLoader.load_templates('map_templates.yml')
 RSpec.describe 'Templates', type: :integration do
   STORY_TEMPLATES.each_key do |template_name|
     it "generates a valid world for template '#{template_name}'" do
@@ -24,7 +23,6 @@ RSpec.describe 'Templates', type: :integration do
       world = game.world
       expect { world.select_story(template_name) }.not_to raise_error
 
-      # scenario_template_key = Story.get_scenario_template_key(Story.templates[template_name])
       scenario_template_key = STORY_TEMPLATES[template_name][:scenario_template_key]
       scenario_template = SCENARIO_TEMPLATES[scenario_template_key.to_sym]
 
@@ -48,6 +46,47 @@ RSpec.describe 'Templates', type: :integration do
         general = world.generals.find_by(name: general_name)
         expect(general).to be_present, "Expected independent general named #{general_name} to exist"
         expect(general.kingdom).to be_nil, "Expected independent general #{general_name} to not belong to any kingdom"
+      end
+    end
+    it "creates the correct number of castles and towns for template '#{template_name}'" do
+      # just check the counts
+    end
+    it "correctly populates the garrisons for template '#{template_name}'" do
+      game = create(:game)
+      world = game.world
+      expect { world.select_story(template_name) }.not_to raise_error
+      map = world.map
+
+      scenario_template_key = STORY_TEMPLATES[template_name][:scenario_template_key]
+      scenario_template = SCENARIO_TEMPLATES[scenario_template_key.to_sym]
+
+      expected_garrison_counts = Hash.new(0)
+      (scenario_template[:kingdoms] || []).each do |kingdom_attrs|
+        kingdom_attrs[:generals].each do |general_ref|
+          next unless general_ref[:starting_castle]
+
+          castle_name = general_ref[:starting_castle]
+          general_key = general_ref[:key]
+          general_name = GENERAL_TEMPLATES[general_key.to_sym][:name]
+          general = world.generals.find_by(name: general_name)
+          expected_castle = map.castles.find_by(name: castle_name)
+          expect(expected_castle.garrison.generals).to include(general)
+          expected_garrison_counts[castle_name] += 1
+        end
+      end
+
+      map_template_key = scenario_template[:map_template_key]
+      map_template = MAP_TEMPLATES[map_template_key.to_sym]
+      map_template[:width].times do |x|
+        map_template[:height].times do |y|
+          tile_settings = map_template[:tiles][:rows][x][y]
+          next unless tile_settings[:location] && tile_settings[:location][:type] == 'Castle'
+
+          castle_name = tile_settings[:location][:name]
+          expected_count = expected_garrison_counts[castle_name] || 0
+          actual_count = map.castles.find_by(name: castle_name).garrison.generals.count
+          expect(actual_count).to eq(expected_count)
+        end
       end
     end
   end

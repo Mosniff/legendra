@@ -15,11 +15,11 @@ class WorldGenerationService
   def generate_world!
     @scenario = build_scenario_from_template!
     @story = build_story_from_template!
-    build_kingdoms_and_generals!
-    build_independent_generals!
     @map = build_map_from_template!
     build_tiles!
     build_routes!
+    build_kingdoms_and_generals!
+    build_independent_generals!
     @world
   end
 
@@ -47,7 +47,11 @@ class WorldGenerationService
       # Create generals for this kingdom
       (kingdom_attrs[:generals] || []).each do |general_ref|
         general_key = general_ref[:key].to_sym
-        build_general_from_template!(general_key, kingdom: kingdom)
+        general = build_general_from_template!(general_key, kingdom: kingdom)
+        next unless general_ref[:starting_castle]
+
+        castle_name = general_ref[:starting_castle]
+        @map.castles.find_by(name: castle_name).garrison.add_general(general)
       end
     end
   end

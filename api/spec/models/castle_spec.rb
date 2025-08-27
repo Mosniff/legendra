@@ -4,6 +4,7 @@ RSpec.describe Castle, type: :model do
   let(:game) { create(:game, :with_story) }
   let(:map) { game.world.map }
   let(:castle) { map.castles.first }
+  let(:empty_castle) { map.castles.last }
 
   it 'initializes correctly' do
     expect(castle).to be_valid
@@ -15,10 +16,10 @@ RSpec.describe Castle, type: :model do
   end
 
   it 'should count as empty if garrison has 0 generals' do
-    expect(castle.empty?).to be true
-    castle.garrison.add_general(game.world.generals.first)
-    expect(castle.empty?).to be false
-    castle.garrison.remove_general(game.world.generals.first)
-    expect(castle.empty?).to be true
+    expect(empty_castle.empty?).to be true
+    empty_castle.garrison.add_general(game.world.generals.first)
+    expect(empty_castle.empty?).to be false
+    empty_castle.garrison.remove_general(game.world.generals.first)
+    expect(empty_castle.empty?).to be true
   end
 end
