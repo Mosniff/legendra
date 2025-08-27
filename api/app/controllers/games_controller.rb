@@ -37,7 +37,12 @@ class GamesController < ApplicationController
   def destroy
     game = current_user.games.find_by(id: params[:id])
     if game
-      game.destroy
+      begin
+        game.destroy!
+      rescue StandardError => e
+        puts "Destroy failed: #{e.class} - #{e.message}"
+        puts e.backtrace
+      end
       head :no_content
     else
       render json: { error: 'Game not found' }, status: :not_found
