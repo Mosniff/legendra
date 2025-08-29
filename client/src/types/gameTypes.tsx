@@ -33,6 +33,7 @@ export type GameMap = {
   tiles: MapTile[];
   width: number;
   height: number;
+  castles: Castle[];
 };
 
 export type MapTile = {
@@ -48,6 +49,7 @@ export type MapTile = {
 export type Castle = {
   id: string;
   name: string;
+  garrisonedGenerals: General[];
 };
 
 export type Town = {

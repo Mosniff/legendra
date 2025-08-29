@@ -1,8 +1,24 @@
-import type { Castle, Game, GameState, Town } from "@/types/gameTypes";
+import type { Game, GameState, Town } from "@/types/gameTypes";
+import {
+  type GeneralApiResponseType,
+  generalAdapter,
+} from "@/services/adapters/generalAdapter";
+import {
+  type CastleApiResponseType,
+  castleAdapter,
+} from "@/services/adapters/castleAdapter";
 
 type GetGameApiResponseIncludedType =
   | { type: "world"; attributes: { id: string } }
-  | { type: "map"; attributes: { id: string; width: number; height: number } }
+  | {
+      type: "map";
+      attributes: {
+        id: string;
+        width: number;
+        height: number;
+        castles: CastleApiResponseType[];
+      };
+    }
   | {
       type: "tile";
       attributes: {
@@ -10,7 +26,7 @@ type GetGameApiResponseIncludedType =
         x_coord: number;
         y_coord: number;
         terrain: string;
-        castle?: Castle;
+        castle?: CastleApiResponseType;
         town?: Town;
         is_route_tile: boolean;
       };
@@ -24,11 +40,7 @@ type GetGameApiResponseIncludedType =
     }
   | {
       type: "general";
-      attributes: {
-        id: string;
-        name: string;
-        kingdom_id: string;
-      };
+      attributes: GeneralApiResponseType;
     };
 export interface GetGameApiResponse {
   data: {
@@ -68,10 +80,15 @@ export const getGameAdapter = (response: GetGameApiResponse): Game => {
         xCoord: tile.attributes.x_coord,
         yCoord: tile.attributes.y_coord,
         terrain: tile.attributes.terrain,
-        castle: tile.attributes.castle,
+        castle: tile.attributes.castle
+          ? castleAdapter(tile.attributes.castle)
+          : undefined,
         town: tile.attributes.town,
         routeTile: tile.attributes.is_route_tile,
       })),
+      castles: mapResponse.attributes.castles.map((apiCastle) => {
+        return castleAdapter(apiCastle);
+      }),
     };
   }
 
@@ -88,12 +105,8 @@ export const getGameAdapter = (response: GetGameApiResponse): Game => {
   const generalsResponse = response.included.filter(
     (included) => included.type == "general"
   );
-  const generals = generalsResponse.map((general) => {
-    return {
-      id: general.attributes.id,
-      name: general.attributes.name,
-      kingdomId: general.attributes.kingdom_id,
-    };
+  const generals = generalsResponse.map((response) => {
+    return generalAdapter(response.attributes);
   });
 
   return {

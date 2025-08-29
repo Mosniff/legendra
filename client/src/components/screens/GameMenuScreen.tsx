@@ -4,6 +4,7 @@ import { AppContextActionTypes } from "@/types/appContextTypes";
 import { WorldMap } from "@/components/WorldMap";
 import { StoryChoice } from "@/components/StoryChoice";
 import { KingdomsList } from "@/components/KingdomsList";
+import { CastlesList } from "@/components/CastlesList";
 
 export const GameMenuScreen = ({}: {}) => {
   const { dispatch: appContextDispatch } = useAppContext();
@@ -32,7 +33,10 @@ export const GameMenuScreen = ({}: {}) => {
           {game.gameState === "in_progress" && (
             <>
               <WorldMap game={game} />
-              <KingdomsList game={game} />
+              <div className="flex gap-2">
+                <KingdomsList game={game} />
+                {game.map && <CastlesList gameMap={game.map} />}
+              </div>
             </>
           )}
         </div>

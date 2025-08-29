@@ -16,7 +16,6 @@ export const WorldMapTile = ({
       (tile) => tile.xCoord === columnNumber && tile.yCoord === rowNumber
     );
     setTile(foundTile);
-    console.log(tile);
   }, [game]);
 
   const terrainColors: { [key: string]: string } = {
