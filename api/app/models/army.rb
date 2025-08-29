@@ -10,7 +10,7 @@ class Army < ApplicationRecord
 
   before_update :destroy_if_empty
 
-  def self.create_with_generals(army_attrs, generals)
+  def self.spawn_with_generals(army_attrs, generals)
     army = Army.create!(army_attrs)
     generals.each { |general| general.update!(assignable: army) }
     army.reload
@@ -19,12 +19,36 @@ class Army < ApplicationRecord
     army
   end
 
-  def add_general(general)
-    raise ArgumentError, "Army already has #{MAX_GENERALS} generals" if generals.count >= MAX_GENERALS
-    raise ArgumentError, 'Cannot add general from a different kingdom' if kingdom && general.kingdom != kingdom
+  def add_generals(generals_to_add)
+    unless generals_to_add.is_a?(Enumerable) && generals_to_add.all? { |g| g.is_a?(General) }
+      raise ArgumentError, 'generals_to_add must be an collection of General objects'
+    end
 
-    general.update!(assignable: self)
+    if (generals.count + generals_to_add.count) > MAX_GENERALS
+      raise ArgumentError,
+            "Army already has #{MAX_GENERALS} generals"
+    end
+
+    generals_to_add.each do |general|
+      raise ArgumentError, 'Cannot add general from a different kingdom' if kingdom && general.kingdom != kingdom
+
+      general.update!(assignable: self)
+    end
+
     save!
+  end
+
+  def add_to_garrison(garrison, generals)
+    raise ArgumentError, 'Must have at least 1 general' if generals.empty?
+    raise ArgumentError, 'All generals must come from this army' unless generals.all? { |g| g.assignable == self }
+
+    unless garrison.x_coord == x_coord && garrison.y_coord == y_coord
+      raise ArgumentError,
+            'Cannot add to garrison from a different tile'
+    end
+
+    garrison.add_generals(generals)
+    garrison
   end
 
   def remove_general(general)
@@ -32,6 +56,10 @@ class Army < ApplicationRecord
 
     general.update!(assignable: nil)
     save!
+  end
+
+  def tile
+    world.map.tiles.find { |tile| tile.x_coord == x_coord && tile.y_coord == y_coord }
   end
 
   private

@@ -4,27 +4,25 @@ require 'rails_helper'
 
 RSpec.describe Army, type: :model do
   let(:game) { create(:game, :with_story) }
-  # TODO: Create armies in world generation
-  # let(:army) { game.world.armies.first }
-  # let(:army) { Army.create!(world: game.world, kingdom: game.world.kingdoms.first, x_coord: 0, y_coord: 0) }
   let(:army) do
-    Army.create_with_generals(
+    Army.spawn_with_generals(
       { world: game.world, kingdom: game.world.kingdoms.first, x_coord: 0, y_coord: 0 },
-      [game.world.generals.first]
+      [
+        General.create(world: game.world, kingdom: game.world.kingdoms.first),
+        General.create(world: game.world, kingdom: game.world.kingdoms.first),
+        General.create(world: game.world, kingdom: game.world.kingdoms.first)
+      ]
     )
   end
 
   it 'initializes correctly' do
     expect(army).to be_valid
-  end
-
-  it 'should have a count of generals' do
-    expect(army.generals.count).to be(1)
+    expect(army.generals.count).to be(3)
   end
 
   it 'should require a minimum of 1 general to create' do
     expect do
-      Army.create_with_generals(
+      Army.spawn_with_generals(
         { world: game.world, kingdom: game.world.kingdoms.first, x_coord: 0, y_coord: 0 },
         []
       )
@@ -32,7 +30,9 @@ RSpec.describe Army, type: :model do
   end
 
   it 'should destroy itself if the general count reaches 0 after update' do
-    army.generals.delete(army.generals.first)
+    3.times do
+      army.generals.delete(army.generals.first)
+    end
     expect { army.reload }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
@@ -42,28 +42,71 @@ RSpec.describe Army, type: :model do
 
   it 'should allow generals to join and leave it' do
     new_general = General.create(world: game.world, kingdom: game.world.kingdoms.first)
-    army.add_general(new_general)
-    expect(army.generals.count).to be(2)
+    army.add_generals([new_general])
+    expect(army.generals.count).to be(4)
     army.remove_general(new_general)
-    expect(army.generals.count).to be(1)
+    expect(army.generals.count).to be(3)
   end
 
   it 'should only allow generals of that kingdom to join' do
     new_general = General.create(world: game.world, kingdom: game.world.kingdoms.last)
     expect do
-      army.add_general(new_general)
+      army.add_generals([new_general])
     end.to raise_error(ArgumentError, 'Cannot add general from a different kingdom')
   end
 
   it 'should have a limit of 5 generals' do
-    4.times do |_i|
+    2.times do |_i|
       new_general = General.create(world: game.world, kingdom: game.world.kingdoms.first)
-      army.add_general(new_general)
+      army.add_generals([new_general])
     end
     new_general = General.create(world: game.world, kingdom: game.world.kingdoms.first)
     expect do
-      army.add_general(new_general)
+      army.add_generals([new_general])
     end.to raise_error(ArgumentError, 'Army already has 5 generals')
+  end
+
+  describe 'Garrison Interaction' do
+    it 'should be able to add to existing garrisons by giving away generals' do
+      garrison = army.tile.castle.garrison
+      expect(garrison.generals.count).to be(1)
+      expect(army.generals.count).to be(3)
+      army.add_to_garrison(garrison, [army.generals.first])
+      expect(garrison.generals.count).to be(2)
+      expect(army.generals.count).to be(2)
+    end
+
+    it 'should not allow adding generals to garrisons if it would exceed the garrison limit' do
+      garrison = army.tile.castle.garrison
+      expect(garrison.generals.count).to be(1)
+      new_generals = []
+      7.times do
+        new_generals << General.create(world: game.world, kingdom: game.world.kingdoms.first)
+      end
+      garrison.add_generals(new_generals)
+      expect(garrison.generals.count).to be(8)
+
+      expect(army.generals.count).to be(3)
+      expect(garrison.generals.count).to be(8)
+      expect do
+        army.add_to_garrison(garrison, [army.generals.first])
+      end.to raise_error(ArgumentError, 'Garrison already has 8 generals')
+      expect(army.generals.count).to be(3)
+      expect(garrison.generals.count).to be(8)
+    end
+
+    it 'should not allow adding generals to garrisons if on different tiles' do
+      garrison = army.tile.castle.garrison
+      new_army = Army.spawn_with_generals(
+        { world: game.world, kingdom: game.world.kingdoms.first, x_coord: 1, y_coord: 1 },
+        [
+          General.create(world: game.world, kingdom: game.world.kingdoms.first)
+        ]
+      )
+      expect do
+        new_army.add_to_garrison(garrison, [new_army.generals.first])
+      end.to raise_error(ArgumentError, 'Cannot add to garrison from a different tile')
+    end
   end
 
   describe 'Movement' do

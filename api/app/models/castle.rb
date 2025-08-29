@@ -13,6 +13,10 @@ class Castle < ApplicationRecord
     garrison.generals.empty?
   end
 
+  def world
+    location.tile.map.world
+  end
+
   private
 
   def ensure_garrison

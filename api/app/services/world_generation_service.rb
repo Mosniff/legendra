@@ -51,7 +51,7 @@ class WorldGenerationService
         next unless general_ref[:starting_castle]
 
         castle_name = general_ref[:starting_castle]
-        @map.castles.find_by(name: castle_name).garrison.add_general(general)
+        @map.castles.find_by(name: castle_name).garrison.add_generals([general])
       end
     end
   end

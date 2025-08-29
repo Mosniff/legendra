@@ -17,7 +17,7 @@ RSpec.describe Castle, type: :model do
 
   it 'should count as empty if garrison has 0 generals' do
     expect(empty_castle.empty?).to be true
-    empty_castle.garrison.add_general(game.world.generals.first)
+    empty_castle.garrison.add_generals([game.world.generals.first])
     expect(empty_castle.empty?).to be false
     empty_castle.garrison.remove_general(game.world.generals.first)
     expect(empty_castle.empty?).to be true

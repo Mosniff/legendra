@@ -6,6 +6,7 @@ class World < ApplicationRecord
   has_one :map, dependent: :destroy
   has_many :kingdoms, dependent: :destroy
   has_many :generals, dependent: :destroy
+  has_many :armies, dependent: :destroy
 
   def select_story(template_name)
     raise 'Game state must be story_choice to assign a story.' if game.game_state != 'story_choice'
