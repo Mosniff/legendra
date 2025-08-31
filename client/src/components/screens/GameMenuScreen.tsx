@@ -17,7 +17,7 @@ export const GameMenuScreen = ({}: {}) => {
         <div>
           <div>
             Game Id: {game.id} Game Slot: {game.slot + 1} Game State:{" "}
-            {game.gameState} Map Tile Count: {game.map?.tiles.length || 0}
+            {game.gameState} Map Tile Count: {game.gameMap?.tiles.length || 0}
           </div>
           <button
             onClick={() => {
@@ -35,7 +35,7 @@ export const GameMenuScreen = ({}: {}) => {
               <WorldMap game={game} />
               <div className="flex gap-2">
                 <KingdomsList game={game} />
-                {game.map && <CastlesList gameMap={game.map} />}
+                {game.gameMap && <CastlesList game={game} />}
               </div>
             </>
           )}

@@ -2,8 +2,8 @@ import { createContext, useContext, useReducer, type ReactNode } from "react";
 import {
   type AuthContextType,
   type AuthContextState,
-  type UserService,
 } from "@/types/authContextTypes";
+import { type UserService } from "@/types/serviceTypes";
 import { authContextReducer } from "@/context/reducers/AuthContextReducer";
 
 const initialState: AuthContextState = {};

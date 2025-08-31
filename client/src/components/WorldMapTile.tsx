@@ -12,7 +12,7 @@ export const WorldMapTile = ({
   const { data: game } = useGameQuery();
   const [tile, setTile] = useState<MapTile | null>();
   useEffect(() => {
-    const foundTile = game?.map?.tiles.find(
+    const foundTile = game?.gameMap?.tiles.find(
       (tile) => tile.xCoord === columnNumber && tile.yCoord === rowNumber
     );
     setTile(foundTile);

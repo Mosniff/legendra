@@ -8,6 +8,7 @@ export type CastleApiResponseType = {
   id: string;
   name: string;
   garrisoned_generals: GeneralApiResponseType[];
+  player_controlled: boolean;
 };
 
 export const castleAdapter = (response: CastleApiResponseType): Castle => {
@@ -17,5 +18,6 @@ export const castleAdapter = (response: CastleApiResponseType): Castle => {
     garrisonedGenerals: response.garrisoned_generals
       ? response.garrisoned_generals.map((general) => generalAdapter(general))
       : [],
+    isPlayerControlled: response.player_controlled,
   };
 };

@@ -5,6 +5,7 @@ import { AuthContextProvider } from "@/context/AuthContext";
 import * as userService from "@/services/UserService";
 import { AppContextProvider } from "@/context/AppContext";
 import * as gameService from "@/services/GameService";
+import * as castleService from "@/services/CastleService";
 
 const queryClient = new QueryClient();
 
@@ -12,7 +13,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider userService={userService}>
-        <AppContextProvider gameService={gameService}>
+        <AppContextProvider
+          gameService={gameService}
+          castleService={castleService}
+        >
           <AppContainer />
         </AppContextProvider>
       </AuthContextProvider>

@@ -115,7 +115,7 @@ export const getGameAdapter = (response: GetGameApiResponse): Game => {
     active: response.data.attributes.active,
     gameState: response.data.attributes.game_state,
     world: world,
-    map: map,
+    gameMap: map,
     kingdoms: kingdoms,
     generals: generals,
   };

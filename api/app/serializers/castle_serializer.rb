@@ -10,4 +10,6 @@ class CastleSerializer
       GeneralSerializer.new(general).serializable_hash[:data][:attributes]
     end
   end
+
+  attribute :player_controlled, &:player_controlled?
 end

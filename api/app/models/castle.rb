@@ -17,6 +17,10 @@ class Castle < ApplicationRecord
     location.tile.map.world
   end
 
+  def player_controlled?
+    garrison.kingdom&.is_player_kingdom || false
+  end
+
   private
 
   def ensure_garrison
