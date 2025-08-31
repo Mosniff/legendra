@@ -29,7 +29,7 @@ export type CastleService = {
   createArmyFromGarrison: (
     authToken: string,
     gameId: string,
-    garrisonId: string,
+    castleId: string,
     selectedGeneralIds: string[]
   ) => Promise<AxiosResponse | null>;
 };

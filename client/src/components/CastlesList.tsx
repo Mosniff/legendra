@@ -71,7 +71,7 @@ const CastleEntry = ({
                     onClick={() =>
                       createArmyFromGarrisonMutation.mutate({
                         gameId: gameId,
-                        garrisonId: castle.id,
+                        castleId: castle.id,
                         selectedGeneralIds: formingArmyGenerals,
                       })
                     }

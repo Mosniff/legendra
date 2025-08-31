@@ -23,4 +23,6 @@ Rails.application.routes.draw do
   get 'games/scenario_templates', to: 'games#scenario_templates'
   patch 'games/:id/set_story', to: 'games#set_story'
   resources :games, only: %i[create update show destroy]
+
+  post 'games/:id/create_army_from_garrison', to: 'games#create_army_from_garrison'
 end

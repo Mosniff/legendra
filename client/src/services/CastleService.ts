@@ -5,13 +5,13 @@ const apiUrl = import.meta.env.VITE_API_URL;
 export const createArmyFromGarrison = async (
   authToken: string,
   gameId: string,
-  garrisonId: string,
+  castleId: string,
   selectedGeneralIds: string[]
 ): Promise<AxiosResponse | null> => {
   try {
     return await axios.post(
       `${apiUrl}/games/${gameId}/create_army_from_garrison`,
-      { garrison_id: garrisonId, selected_general_ids: selectedGeneralIds },
+      { castle_id: castleId, selected_general_ids: selectedGeneralIds },
       {
         headers: { Authorization: authToken },
       }

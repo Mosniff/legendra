@@ -11,17 +11,17 @@ export const useCreateArmyFromGarrisonMutation = () => {
   return useMutation({
     mutationFn: ({
       gameId,
-      garrisonId,
+      castleId,
       selectedGeneralIds,
     }: {
       gameId: string;
-      garrisonId: string;
+      castleId: string;
       selectedGeneralIds: string[];
     }) =>
       castleService.createArmyFromGarrison(
         authContextState.authToken!,
         gameId,
-        garrisonId,
+        castleId,
         selectedGeneralIds
       ),
     onSuccess: () => {

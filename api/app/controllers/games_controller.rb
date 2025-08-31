@@ -62,6 +62,16 @@ class GamesController < ApplicationController
     end
   end
 
+  def create_army_from_garrison
+    game = current_user.games.find_by(id: params[:id])
+    if game
+      generals = General.where(id: params[:selected_general_ids])
+      Castle.find(params[:castle_id]).garrison.create_army(generals)
+    else
+      render json: { error: 'Game not found' }, status: :not_found
+    end
+  end
+
   private
 
   def game_params
