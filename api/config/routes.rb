@@ -25,4 +25,5 @@ Rails.application.routes.draw do
   resources :games, only: %i[create update show destroy]
 
   post 'games/:id/create_army_from_garrison', to: 'games#create_army_from_garrison'
+  patch 'games/:id/add_to_garrison_from_army', to: 'games#add_to_garrison_from_army'
 end

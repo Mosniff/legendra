@@ -62,6 +62,7 @@ type GetGameApiResponseIncludedType =
       attributes: {
         x_coord: number;
         y_coord: number;
+        player_controlled: boolean;
       };
     }
   | {
@@ -154,6 +155,7 @@ export const getGameAdapter = (
       generalIds: army.relationships.generals.data.map((general) => general.id),
       xCoord: army.attributes.x_coord,
       yCoord: army.attributes.y_coord,
+      isPlayerControlled: army.attributes.player_controlled,
     };
   });
 

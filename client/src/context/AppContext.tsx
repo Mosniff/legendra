@@ -1,5 +1,9 @@
 import type { AppContextState, AppContextType } from "@/types/appContextTypes";
-import type { CastleService, GameService } from "@/types/serviceTypes";
+import type {
+  ArmyService,
+  CastleService,
+  GameService,
+} from "@/types/serviceTypes";
 import { createContext, useContext, useReducer, type ReactNode } from "react";
 import { appContextReducer } from "./reducers/AppContextReducer";
 
@@ -13,16 +17,18 @@ export const AppContextProvider = ({
   children,
   gameService,
   castleService,
+  armyService,
 }: {
   children: ReactNode;
   gameService: GameService;
   castleService: CastleService;
+  armyService: ArmyService;
 }) => {
   const [state, dispatch] = useReducer(appContextReducer, initialState);
 
   return (
     <AppContext.Provider
-      value={{ state, dispatch, gameService, castleService }}
+      value={{ state, dispatch, gameService, castleService, armyService }}
     >
       {children}
     </AppContext.Provider>

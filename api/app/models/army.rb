@@ -8,7 +8,7 @@ class Army < ApplicationRecord
 
   has_many :generals, as: :assignable, after_remove: :destroy_if_empty
 
-  before_update :destroy_if_empty
+  after_update :destroy_if_empty
 
   def self.spawn_with_generals(army_attrs, generals)
     army = Army.create!(army_attrs)
@@ -48,6 +48,7 @@ class Army < ApplicationRecord
     end
 
     garrison.add_generals(generals)
+    destroy_if_empty
     garrison
   end
 
@@ -56,10 +57,15 @@ class Army < ApplicationRecord
 
     general.update!(assignable: nil)
     save!
+    destroy_if_empty
   end
 
   def tile
     world.map.tiles.find { |tile| tile.x_coord == x_coord && tile.y_coord == y_coord }
+  end
+
+  def player_controlled?
+    kingdom&.is_player_kingdom || false
   end
 
   private

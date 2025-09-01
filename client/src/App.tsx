@@ -6,6 +6,7 @@ import * as userService from "@/services/UserService";
 import { AppContextProvider } from "@/context/AppContext";
 import * as gameService from "@/services/GameService";
 import * as castleService from "@/services/CastleService";
+import * as armyService from "@/services/ArmyService";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ function App() {
         <AppContextProvider
           gameService={gameService}
           castleService={castleService}
+          armyService={armyService}
         >
           <AppContainer />
         </AppContextProvider>

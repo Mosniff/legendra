@@ -64,6 +64,7 @@ export type Army = {
   id: string;
   xCoord: number;
   yCoord: number;
+  isPlayerControlled: boolean;
   kingdomId: string;
   generalIds: string[];
 };

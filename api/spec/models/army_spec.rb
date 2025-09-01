@@ -31,9 +31,9 @@ RSpec.describe Army, type: :model do
 
   it 'should destroy itself if the general count reaches 0 after update' do
     3.times do
-      army.generals.delete(army.generals.first)
+      army.remove_general(army.generals.first)
     end
-    expect { army.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    expect(Army.where(id: army.id)).to be_empty
   end
 
   it 'should have a leader general' do

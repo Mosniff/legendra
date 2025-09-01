@@ -1,5 +1,9 @@
 import type { AppContextActions } from "@/context/reducers/AppContextReducer";
-import type { GameService, CastleService } from "@/types/serviceTypes";
+import type {
+  GameService,
+  CastleService,
+  ArmyService,
+} from "@/types/serviceTypes";
 
 export type AppContextState = {
   currentScreen: AppScreen;
@@ -10,6 +14,7 @@ export type AppContextType = {
   dispatch: React.Dispatch<AppContextActions>;
   gameService: GameService;
   castleService: CastleService;
+  armyService: ArmyService;
 };
 
 export enum AppContextActionTypes {

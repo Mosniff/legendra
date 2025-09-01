@@ -7,5 +7,5 @@ class ArmySerializer
   attributes :id, :x_coord, :y_coord
   has_many :generals
 
-  # attribute :player_controlled, &:player_controlled?
+  attribute :player_controlled, &:player_controlled?
 end
