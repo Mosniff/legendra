@@ -5,6 +5,7 @@ import { WorldMap } from "@/components/WorldMap";
 import { StoryChoice } from "@/components/StoryChoice";
 import { KingdomsList } from "@/components/KingdomsList";
 import { CastlesList } from "@/components/CastlesList";
+import { ArmiesList } from "@/components/ArmiesList";
 
 export const GameMenuScreen = ({}: {}) => {
   const { dispatch: appContextDispatch } = useAppContext();
@@ -17,7 +18,8 @@ export const GameMenuScreen = ({}: {}) => {
         <div>
           <div>
             Game Id: {game.id} Game Slot: {game.slot + 1} Game State:{" "}
-            {game.gameState} Map Tile Count: {game.gameMap?.tiles.length || 0}
+            {game.gameState} Map Tile Count:{" "}
+            {game.world?.gameMap?.tiles.length || 0}
           </div>
           <button
             onClick={() => {
@@ -30,12 +32,13 @@ export const GameMenuScreen = ({}: {}) => {
             Back to Game Select
           </button>
           {game.gameState === "story_choice" && <StoryChoice game={game} />}
-          {game.gameState === "in_progress" && (
+          {game.gameState === "in_progress" && game.world && (
             <>
-              <WorldMap game={game} />
+              <WorldMap world={game.world} />
               <div className="flex gap-2">
-                <KingdomsList game={game} />
-                {game.gameMap && <CastlesList game={game} />}
+                <KingdomsList world={game.world} />
+                <CastlesList world={game.world} />
+                <ArmiesList world={game.world} />
               </div>
             </>
           )}

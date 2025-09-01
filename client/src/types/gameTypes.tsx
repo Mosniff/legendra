@@ -2,24 +2,28 @@ export type Game = {
   id: string;
   slot: number;
   active: boolean;
-  world?: GameWorld;
-  gameMap?: GameMap;
   gameState: GameState;
-  kingdoms: Kingdom[];
-  generals: General[];
+  world?: GameWorld;
 };
 
 export type GameState = "story_choice" | "in_progress";
 
 export type GameWorld = {
   id: string;
+  gameId: string;
+  gameMap: GameMap;
+  kingdoms: Kingdom[];
+  generals: General[];
+  castles: Castle[];
+  towns: Town[];
+  armies: Army[];
 };
+
 export type GameMap = {
   id: string;
-  tiles: MapTile[];
   width: number;
   height: number;
-  castles: Castle[];
+  tiles: MapTile[];
 };
 
 export type MapTile = {
@@ -27,16 +31,16 @@ export type MapTile = {
   xCoord: number;
   yCoord: number;
   terrain: string;
-  castle?: Castle | null;
-  town?: Town | null;
   routeTile: boolean;
+  castleId?: string | null;
+  townId?: string | null;
 };
 
 export type Castle = {
   id: string;
   name: string;
-  garrisonedGenerals: General[];
   isPlayerControlled: boolean;
+  garrisonedGeneralIds: string[];
 };
 
 export type Town = {
@@ -47,12 +51,21 @@ export type Town = {
 export type Kingdom = {
   id: string;
   name: string;
+  isPlayerKingdom: boolean;
 };
 
 export type General = {
   id: string;
-  kingdomId?: string;
   name: string;
+  kingdomId?: string;
+};
+
+export type Army = {
+  id: string;
+  xCoord: number;
+  yCoord: number;
+  kingdomId: string;
+  generalIds: string[];
 };
 
 export type ScenarioTemplate = {

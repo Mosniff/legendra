@@ -1,14 +1,14 @@
-import type { Game } from "@/types/gameTypes";
+import type { GameWorld } from "@/types/gameTypes";
 
-export const KingdomsList = ({ game }: { game: Game }) => {
+export const KingdomsList = ({ world }: { world: GameWorld }) => {
   return (
     <div>
-      {game.kingdoms.map((kingdom) => (
+      {world.kingdoms.map((kingdom) => (
         <div key={kingdom.id}>
           <div>{kingdom.name}</div>
           <div>
             <ul className="ml-2">
-              {game.generals
+              {world.generals
                 .filter((general) => general.kingdomId === kingdom.id)
                 .map((general) => (
                   <li key={general.id}>{general.name}</li>
@@ -20,7 +20,7 @@ export const KingdomsList = ({ game }: { game: Game }) => {
       <div>Indepedent Generals</div>
       <div>
         <ul className="ml-2">
-          {game.generals
+          {world.generals
             .filter((general) => !general.kingdomId)
             .map((general) => (
               <li key={general.id}>{general.name}</li>

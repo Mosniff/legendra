@@ -1,46 +1,86 @@
-import type { Game, GameState, Town } from "@/types/gameTypes";
-import {
-  type GeneralApiResponseType,
-  generalAdapter,
-} from "@/services/adapters/generalAdapter";
-import {
-  type CastleApiResponseType,
-  castleAdapter,
-} from "@/services/adapters/castleAdapter";
+import type {
+  Army,
+  Castle,
+  Game,
+  GameMap,
+  GameState,
+  GameWorld,
+  General,
+  Kingdom,
+  Town,
+} from "@/types/gameTypes";
 
 type GetGameApiResponseIncludedType =
-  | { type: "world"; attributes: { id: string } }
+  | { type: "world"; id: string }
   | {
       type: "map";
+      id: string;
       attributes: {
-        id: string;
         width: number;
         height: number;
-        castles: CastleApiResponseType[];
       };
     }
   | {
       type: "tile";
+      id: string;
       attributes: {
-        id: string;
         x_coord: number;
         y_coord: number;
         terrain: string;
-        castle?: CastleApiResponseType;
-        town?: Town;
         is_route_tile: boolean;
+      };
+      relationships: {
+        castle: { data: { id: string; type: "castle" } | null };
+        town: { data: { id: string; type: "town" } | null };
       };
     }
   | {
       type: "kingdom";
+      id: string;
       attributes: {
-        id: string;
         name: string;
+        is_player_kingdom: boolean;
       };
     }
   | {
       type: "general";
-      attributes: GeneralApiResponseType;
+      id: string;
+      attributes: {
+        name: string;
+      };
+      relationships: {
+        kingdom: { data: { id: string; type: "kingdom" } | null };
+      };
+    }
+  | {
+      type: "army";
+      id: string;
+      relationships: {
+        generals: { data: { id: string; type: "general" }[] };
+        kingdom: { data: { id: string; type: "kingdom" } };
+      };
+      attributes: {
+        x_coord: number;
+        y_coord: number;
+      };
+    }
+  | {
+      type: "castle";
+      id: string;
+      attributes: {
+        name: string;
+        player_controlled: boolean;
+      };
+      relationships: {
+        generals: { data: { id: string; type: "general" }[] };
+      };
+    }
+  | {
+      type: "town";
+      id: string;
+      attributes: {
+        name: string;
+      };
     };
 export interface GetGameApiResponse {
   data: {
@@ -53,15 +93,10 @@ export interface GetGameApiResponse {
   };
   included: GetGameApiResponseIncludedType[];
 }
-export const getGameAdapter = (response: GetGameApiResponse): Game => {
-  const worldResponse = response.included.find(
-    (included) => included.type == "world"
-  );
-  let world = undefined;
-  if (worldResponse) {
-    world = { id: worldResponse.attributes.id };
-  }
-
+export const getGameAdapter = (
+  response: GetGameApiResponse,
+  gameId: string
+): Game => {
   const mapResponse = response.included.find(
     (included) => included.type == "map"
   );
@@ -69,45 +104,99 @@ export const getGameAdapter = (response: GetGameApiResponse): Game => {
     (included) => included.type == "tile"
   );
 
-  let map = undefined;
+  let gameMap: GameMap | undefined = undefined;
   if (mapResponse) {
-    map = {
-      id: mapResponse.attributes.id,
+    gameMap = {
+      id: mapResponse.id,
       width: mapResponse.attributes.width,
       height: mapResponse.attributes.height,
       tiles: tilesResponse.map((tile) => ({
-        id: tile.attributes.id,
+        id: tile.id,
         xCoord: tile.attributes.x_coord,
         yCoord: tile.attributes.y_coord,
         terrain: tile.attributes.terrain,
-        castle: tile.attributes.castle
-          ? castleAdapter(tile.attributes.castle)
-          : undefined,
-        town: tile.attributes.town,
+        castleId: tile.relationships.castle.data?.id,
+        townId: tile.relationships.town.data?.id,
         routeTile: tile.attributes.is_route_tile,
       })),
-      castles: mapResponse.attributes.castles.map((apiCastle) => {
-        return castleAdapter(apiCastle);
-      }),
     };
   }
 
   const kingdomsResponse = response.included.filter(
     (included) => included.type == "kingdom"
   );
-  const kingdoms = kingdomsResponse.map((kingdom) => {
+  const kingdoms: Kingdom[] = kingdomsResponse.map((kingdom) => {
     return {
-      id: kingdom.attributes.id,
+      id: kingdom.id,
       name: kingdom.attributes.name,
+      isPlayerKingdom: kingdom.attributes.is_player_kingdom,
     };
   });
 
   const generalsResponse = response.included.filter(
     (included) => included.type == "general"
   );
-  const generals = generalsResponse.map((response) => {
-    return generalAdapter(response.attributes);
+  const generals: General[] = generalsResponse.map((general) => {
+    return {
+      id: general.id,
+      name: general.attributes.name,
+      kingdomId: general.relationships.kingdom.data?.id,
+    };
   });
+
+  const armiesResponse = response.included.filter(
+    (included) => included.type == "army"
+  );
+  const armies: Army[] = armiesResponse.map((army) => {
+    return {
+      id: army.id,
+      kingdomId: army.relationships.kingdom.data.id,
+      generalIds: army.relationships.generals.data.map((general) => general.id),
+      xCoord: army.attributes.x_coord,
+      yCoord: army.attributes.y_coord,
+    };
+  });
+
+  const castlesResponse = response.included.filter(
+    (included) => included.type == "castle"
+  );
+  const castles: Castle[] = castlesResponse.map((castle) => {
+    return {
+      id: castle.id,
+      name: castle.attributes.name,
+      isPlayerControlled: castle.attributes.player_controlled,
+      garrisonedGeneralIds: castle.relationships.generals.data.map(
+        (general) => general.id
+      ),
+    };
+  });
+
+  const townsResponse = response.included.filter(
+    (included) => included.type == "town"
+  );
+  const towns: Town[] = townsResponse.map((town) => {
+    return {
+      id: town.id,
+      name: town.attributes.name,
+    };
+  });
+
+  const worldResponse = response.included.find(
+    (included) => included.type == "world"
+  );
+  let world: GameWorld | undefined = undefined;
+  if (worldResponse && gameMap) {
+    world = {
+      id: worldResponse.id,
+      gameId: gameId,
+      gameMap: gameMap,
+      kingdoms: kingdoms,
+      generals: generals,
+      armies: armies,
+      castles: castles,
+      towns: towns,
+    };
+  }
 
   return {
     id: response.data.attributes.id,
@@ -115,8 +204,5 @@ export const getGameAdapter = (response: GetGameApiResponse): Game => {
     active: response.data.attributes.active,
     gameState: response.data.attributes.game_state,
     world: world,
-    gameMap: map,
-    kingdoms: kingdoms,
-    generals: generals,
   };
 };

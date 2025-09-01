@@ -5,10 +5,8 @@ class CastleSerializer
 
   attributes :id, :name
 
-  attribute :garrisoned_generals do |castle|
-    castle.garrison.generals.map do |general|
-      GeneralSerializer.new(general).serializable_hash[:data][:attributes]
-    end
+  has_many :generals do |castle|
+    castle.garrison.generals
   end
 
   attribute :player_controlled, &:player_controlled?

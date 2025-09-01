@@ -18,4 +18,12 @@ class World < ApplicationRecord
   def player_kingdom
     kingdoms.find_by(is_player_kingdom: true) || raise('No player kingdom found')
   end
+
+  def castles
+    map.castles
+  end
+
+  def towns
+    map.towns
+  end
 end

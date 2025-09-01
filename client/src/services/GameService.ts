@@ -19,7 +19,7 @@ export const getGame = async (
       }
     );
     console.log("response in getGame", response);
-    return getGameAdapter(response.data);
+    return getGameAdapter(response.data, id);
   } catch (err) {
     console.log("error in getGame", err);
     return null;

@@ -1,6 +1,6 @@
 import type { AxiosResponse } from "axios";
-import type { Game, ScenarioTemplate } from "./gameTypes";
-import type { SignInUser, User } from "./authContextTypes";
+import type { Game, ScenarioTemplate } from "@/types/gameTypes";
+import type { SignInUser, User } from "@/types/authContextTypes";
 
 export type UserService = {
   // TODO: remove any

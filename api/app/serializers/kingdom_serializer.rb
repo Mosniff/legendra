@@ -2,5 +2,6 @@
 
 class KingdomSerializer
   include JSONAPI::Serializer
-  attributes :id, :name
+
+  attributes :id, :name, :is_player_kingdom
 end
