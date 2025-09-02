@@ -34,6 +34,13 @@ RSpec.describe Army, type: :model do
       army.remove_general(army.generals.first)
     end
     expect(Army.where(id: army.id)).to be_empty
+
+    new_army = Army.spawn_with_generals(
+      { world: game.world, kingdom: game.world.kingdoms.first, x_coord: 0, y_coord: 0 },
+      [General.create(world: game.world, kingdom: game.world.kingdoms.first)]
+    )
+    new_army.generals.first.update(assignable: nil)
+    expect(Army.where(id: new_army.id)).to be_empty
   end
 
   it 'should have a leader general' do

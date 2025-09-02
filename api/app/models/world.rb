@@ -20,10 +20,10 @@ class World < ApplicationRecord
   end
 
   def castles
-    map.castles
+    map&.castles
   end
 
   def towns
-    map.towns
+    map&.towns
   end
 end

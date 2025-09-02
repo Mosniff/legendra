@@ -28,20 +28,20 @@ const ArmyEntry = ({
               {castleMenuOpen && (
                 <input
                   type="checkbox"
+                  checked={enteringCastleGenerals.includes(generalId)}
                   onChange={(e) => {
                     if (e.target.checked) {
                       setEnteringCastleGenerals([
                         ...enteringCastleGenerals,
                         generalId,
                       ]);
-                    }
-                    if (!e.target.checked) {
+                    } else {
                       setEnteringCastleGenerals(
                         enteringCastleGenerals.filter((id) => id !== generalId)
                       );
                     }
                   }}
-                ></input>
+                />
               )}
             </div>
           )
@@ -61,20 +61,24 @@ const ArmyEntry = ({
             <div>
               <button
                 className="border text-sm p-1"
-                onClick={() => setCastleMenuOpen(false)}
+                onClick={() => {
+                  setEnteringCastleGenerals([]);
+                  setCastleMenuOpen(false);
+                }}
               >
                 Cancel
               </button>
               <button
                 className="border text-sm p-1"
                 disabled={enteringCastleGenerals.length < 1}
-                onClick={() =>
+                onClick={() => {
                   addToGarrisonFromArmyMutation.mutate({
                     gameId: gameId,
                     armyId: army.id,
                     selectedGeneralIds: enteringCastleGenerals,
-                  })
-                }
+                  });
+                  setEnteringCastleGenerals([]);
+                }}
               >
                 Accept
               </button>

@@ -68,8 +68,6 @@ class Army < ApplicationRecord
     kingdom&.is_player_kingdom || false
   end
 
-  private
-
   def destroy_if_empty(_general = nil)
     destroy if generals.empty?
   end

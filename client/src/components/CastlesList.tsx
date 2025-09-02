@@ -35,6 +35,7 @@ const CastleEntry = ({
                       {formingArmy && (
                         <input
                           type="checkbox"
+                          checked={formingArmyGenerals.includes(generalId)}
                           onChange={(e) => {
                             if (e.target.checked) {
                               setFormingArmyGenerals([
@@ -72,20 +73,24 @@ const CastleEntry = ({
                 <div>
                   <button
                     className="border text-sm p-1"
-                    onClick={() => setFormingArmy(false)}
+                    onClick={() => {
+                      setFormingArmyGenerals([]);
+                      setFormingArmy(false);
+                    }}
                   >
                     Cancel
                   </button>
                   <button
                     className="border text-sm p-1"
                     disabled={formingArmyGenerals.length < 1}
-                    onClick={() =>
+                    onClick={() => {
                       createArmyFromGarrisonMutation.mutate({
                         gameId: gameId,
                         castleId: castle.id,
                         selectedGeneralIds: formingArmyGenerals,
-                      })
-                    }
+                      });
+                      setFormingArmyGenerals([]);
+                    }}
                   >
                     Accept
                   </button>
