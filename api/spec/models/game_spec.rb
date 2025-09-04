@@ -21,6 +21,7 @@ RSpec.describe Game, type: :model do
 
       expect(game.world).to be_a(World)
       expect(game.story).to be_nil
+      expect(game.turn).to eq(1)
     end
 
     it 'does not allow invalid values' do

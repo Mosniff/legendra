@@ -4,6 +4,7 @@ export type Game = {
   active: boolean;
   gameState: GameState;
   world?: GameWorld;
+  turn: number;
 };
 
 export type GameState = "story_choice" | "in_progress";

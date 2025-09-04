@@ -94,6 +94,7 @@ export interface GetGameApiResponse {
       slot: number;
       active: boolean;
       game_state: GameState;
+      turn: number;
     };
   };
   included: GetGameApiResponseIncludedType[];
@@ -214,5 +215,6 @@ export const getGameAdapter = (
     active: response.data.attributes.active,
     gameState: response.data.attributes.game_state,
     world: world,
+    turn: response.data.attributes.turn,
   };
 };

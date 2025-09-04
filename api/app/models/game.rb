@@ -14,7 +14,13 @@ class Game < ApplicationRecord
   after_create :create_world
   before_save :ensure_single_active_game
 
+  before_create :set_starting_turn
+
   private
+
+  def set_starting_turn
+    self.turn ||= 1
+  end
 
   def create_world
     World.create!(game: self)

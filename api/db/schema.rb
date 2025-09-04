@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_26_151739) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_04_101751) do
   create_table "armies", force: :cascade do |t|
     t.integer "kingdom_id", null: false
     t.integer "world_id", null: false
@@ -37,6 +37,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_26_151739) do
     t.integer "slot"
     t.string "game_state", default: "story_choice", null: false
     t.boolean "active", default: false, null: false
+    t.integer "turn"
     t.index ["user_id"], name: "index_games_on_user_id"
   end
 
