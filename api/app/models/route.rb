@@ -4,6 +4,8 @@ class Route < ApplicationRecord
   belongs_to :location_a, class_name: 'Location'
   belongs_to :location_b, class_name: 'Location'
 
+  has_many :currently_traveling_armies, class_name: 'Army', foreign_key: 'route_id'
+
   validates :location_a_id, uniqueness: { scope: :location_b_id }
   validate :locations_are_different
   validate :path_is_sequential_and_adjacent
@@ -12,6 +14,10 @@ class Route < ApplicationRecord
 
   def other_end(location)
     location == location_a ? location_b : location_a
+  end
+
+  def find_path_index_from_coords(x_coord, y_coord)
+    path.index { |coords| coords == [x_coord, y_coord] }
   end
 
   private

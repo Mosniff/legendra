@@ -19,7 +19,12 @@ RSpec.describe Tile, type: :model do
     expect(map.get_tile(2, 2).related_routes[0].id).to eq(route.id)
   end
 
+  it 'should be able to get tile given coordinates' do
+    skip 'Not implemented yet'
+  end
+
   describe 'Map Gen' do
+    # TODO: move
     it 'generates the correct tiles according to the story settings' do
       expect(map.get_tile(0, 0).terrain).to eq('grassland')
       expect(map.get_tile(4, 4).terrain).to eq('snow')

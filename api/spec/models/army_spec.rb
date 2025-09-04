@@ -116,17 +116,57 @@ RSpec.describe Army, type: :model do
     end
   end
 
-  describe 'Movement' do
-    it 'should be able to get its tile from its coordinates' do
-      skip 'Not implemented yet'
-    end
-
+  describe 'Movement & Location' do
     it 'should be able to move to a new tile' do
-      skip 'Not implemented yet'
+      expect(army.x_coord).to be(0)
+      expect(army.y_coord).to be(0)
+      army.send(:move_to, 1, 1)
+      expect(army.x_coord).to be(1)
+      expect(army.y_coord).to be(1)
     end
 
     it 'should only be able to move to tiles 1 tile away' do
-      skip 'Not implemented yet'
+      expect do
+        army.send(:move_to, 2, 2)
+      end.to raise_error(ArgumentError, 'Can only move to adjacent tiles')
+    end
+
+    it 'should be able to be assigned a route starting on the same tile' do
+      expect(army.currently_traveling_route).to be_nil
+      route = army.current_location.get_route_to(army.current_location.connected_locations.first)
+      army.assign_to_route(route)
+      expect(army.currently_traveling_route).to be(route)
+    end
+
+    it 'should not be able to be assigned a route starting on a different tile' do
+      route = Route.where.not(location_a: army.current_location).where.not(location_b: army.current_location).first
+      expect do
+        army.assign_to_route(route)
+      end.to raise_error(ArgumentError, 'Route must start on the same tile as the army')
+    end
+
+    it 'should be able to move along routes' do
+      route = army.current_location.get_route_to(army.current_location.connected_locations.first)
+      army.assign_to_route(route)
+      expect(army.x_coord).to be(route.location_a.tile.x_coord)
+      expect(army.y_coord).to be(route.location_a.tile.y_coord)
+      army.advance_along_route
+      expect(army.x_coord).to be(route.path[0][0])
+      expect(army.y_coord).to be(route.path[0][1])
+    end
+
+    it 'should unassign route when it reaches the destination' do
+      route = army.current_location.get_route_to(army.current_location.connected_locations.first)
+      army.assign_to_route(route)
+      destination_coords = [route.location_b.tile.x_coord, route.location_b.tile.y_coord]
+      army.currently_traveling_route.path.length.times do
+        army.advance_along_route
+      end
+      expect(army.currently_traveling_route).to be(route)
+      army.advance_along_route
+      expect(army.currently_traveling_route).to be_nil
+      expect(army.x_coord).to eq(destination_coords[0])
+      expect(army.y_coord).to eq(destination_coords[1])
     end
   end
 end

@@ -10,6 +10,10 @@ class Location < ApplicationRecord
     Route.where('location_a_id = ? OR location_b_id = ?', id, id)
   end
 
+  def self.get_location_at(x_coord, y_coord)
+    Tile.get_tile(x_coord, y_coord).location
+  end
+
   def connected_locations
     routes.map { |route| route.other_end(self) }
   end

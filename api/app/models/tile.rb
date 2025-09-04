@@ -10,6 +10,10 @@ class Tile < ApplicationRecord
     end
   end
 
+  def self.get_tile(x_coord, y_coord)
+    Tile.find_by(x_coord: x_coord, y_coord: y_coord)
+  end
+
   def castle
     raise ArgumentError, 'Tile does not have a Castle' unless location&.locatable_type == 'Castle'
 

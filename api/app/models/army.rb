@@ -5,6 +5,7 @@ class Army < ApplicationRecord
 
   belongs_to :kingdom
   belongs_to :world
+  belongs_to :currently_traveling_route, class_name: 'Route', foreign_key: 'route_id', optional: true
 
   has_many :generals, as: :assignable, after_remove: :destroy_if_empty
 
@@ -70,5 +71,49 @@ class Army < ApplicationRecord
 
   def destroy_if_empty(_general = nil)
     destroy if generals.empty?
+  end
+
+  def current_location
+    Location.get_location_at(x_coord, y_coord)
+  end
+
+  def assign_to_route(route)
+    unless route.location_a.tile.x_coord == x_coord && route.location_a.tile.y_coord == y_coord
+      raise ArgumentError,
+            'Route must start on the same tile as the army'
+    end
+
+    update!(currently_traveling_route: route)
+  end
+
+  def advance_along_route
+    unless currently_traveling_route
+      raise ArgumentError,
+            'Army is not currently traveling along a route'
+    end
+
+    if current_location == currently_traveling_route.location_a
+      next_position = currently_traveling_route.path[0]
+
+    elsif x_coord == currently_traveling_route.path[-1][0] && y_coord == currently_traveling_route.path[-1][1]
+      destination_tile = currently_traveling_route.location_b.tile
+      next_position = [destination_tile.x_coord, destination_tile.y_coord]
+    else
+      current_path_index = currently_traveling_route.find_path_index_from_coords(x_coord, y_coord)
+      next_position = currently_traveling_route.path[current_path_index + 1]
+    end
+
+    move_to(next_position[0], next_position[1])
+    return unless current_location == currently_traveling_route.location_b
+
+    update!(currently_traveling_route: nil)
+  end
+
+  private
+
+  def move_to(new_x, new_y)
+    raise ArgumentError, 'Can only move to adjacent tiles' if (new_x - x_coord).abs > 1 || (new_y - y_coord).abs > 1
+
+    update!(x_coord: new_x, y_coord: new_y)
   end
 end
