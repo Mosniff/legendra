@@ -3,7 +3,7 @@
 class CastleSerializer
   include JSONAPI::Serializer
 
-  attributes :id, :name
+  attributes :id, :name, :x_coord, :y_coord
 
   has_many :generals do |castle|
     castle.garrison.generals

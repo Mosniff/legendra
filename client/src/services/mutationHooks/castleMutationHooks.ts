@@ -29,3 +29,33 @@ export const useCreateArmyFromGarrisonMutation = () => {
     },
   });
 };
+
+export const useAddToArmyFromGarrisonMutation = () => {
+  const { state: authContextState } = useAuthContext();
+  const { castleService } = useAppContext();
+  const { refetch: refetchGame } = useGameQuery();
+
+  return useMutation({
+    mutationFn: ({
+      gameId,
+      castleId,
+      armyId,
+      selectedGeneralIds,
+    }: {
+      gameId: string;
+      castleId: string;
+      armyId: string;
+      selectedGeneralIds: string[];
+    }) =>
+      castleService.addToArmyFromGarrison(
+        authContextState.authToken!,
+        gameId,
+        castleId,
+        armyId,
+        selectedGeneralIds
+      ),
+    onSuccess: () => {
+      refetchGame();
+    },
+  });
+};

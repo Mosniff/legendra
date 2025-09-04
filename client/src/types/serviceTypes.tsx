@@ -32,6 +32,13 @@ export type CastleService = {
     castleId: string,
     selectedGeneralIds: string[]
   ) => Promise<AxiosResponse | null>;
+  addToArmyFromGarrison: (
+    authToken: string,
+    gameId: string,
+    castleId: string,
+    armyId: string,
+    selectedGeneralIds: string[]
+  ) => Promise<AxiosResponse | null>;
 };
 
 export type ArmyService = {

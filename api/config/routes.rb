@@ -26,4 +26,5 @@ Rails.application.routes.draw do
 
   post 'games/:id/create_army_from_garrison', to: 'games#create_army_from_garrison'
   patch 'games/:id/add_to_garrison_from_army', to: 'games#add_to_garrison_from_army'
+  patch 'games/:id/add_to_army_from_garrison', to: 'games#add_to_army_from_garrison'
 end

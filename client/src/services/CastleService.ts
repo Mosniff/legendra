@@ -21,3 +21,28 @@ export const createArmyFromGarrison = async (
     return null;
   }
 };
+
+export const addToArmyFromGarrison = async (
+  authToken: string,
+  gameId: string,
+  castleId: string,
+  armyId: string,
+  selectedGeneralIds: string[]
+): Promise<AxiosResponse | null> => {
+  try {
+    return await axios.patch(
+      `${apiUrl}/games/${gameId}/add_to_army_from_garrison`,
+      {
+        castle_id: castleId,
+        army_id: armyId,
+        selected_general_ids: selectedGeneralIds,
+      },
+      {
+        headers: { Authorization: authToken },
+      }
+    );
+  } catch (err) {
+    console.log("error in addToArmyFromGarrison", err);
+    return null;
+  }
+};

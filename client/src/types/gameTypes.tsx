@@ -41,11 +41,15 @@ export type Castle = {
   name: string;
   isPlayerControlled: boolean;
   garrisonedGeneralIds: string[];
+  xCoord: number;
+  yCoord: number;
 };
 
 export type Town = {
   id: string;
   name: string;
+  xCoord: number;
+  yCoord: number;
 };
 
 export type Kingdom = {

@@ -78,8 +78,8 @@ export const WorldMapTile = ({
           </div>
           {/* Armies Slot */}
           <div className="absolute bottom-0 right-0 mb-0.5 mr-0.5 flex gap-1">
-            {armies.map((_army) => (
-              <div className="h-1 w-1 bg-fuchsia-500"></div>
+            {armies.map((army) => (
+              <div key={army.id} className="h-1 w-1 bg-fuchsia-500"></div>
             ))}
           </div>
         </div>

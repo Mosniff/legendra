@@ -3,5 +3,5 @@
 class TownSerializer
   include JSONAPI::Serializer
 
-  attributes :id, :name
+  attributes :id, :name, :x_coord, :y_coord
 end

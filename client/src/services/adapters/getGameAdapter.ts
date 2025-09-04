@@ -71,6 +71,8 @@ type GetGameApiResponseIncludedType =
       attributes: {
         name: string;
         player_controlled: boolean;
+        x_coord: number;
+        y_coord: number;
       };
       relationships: {
         generals: { data: { id: string; type: "general" }[] };
@@ -81,6 +83,8 @@ type GetGameApiResponseIncludedType =
       id: string;
       attributes: {
         name: string;
+        x_coord: number;
+        y_coord: number;
       };
     };
 export interface GetGameApiResponse {
@@ -170,6 +174,8 @@ export const getGameAdapter = (
       garrisonedGeneralIds: castle.relationships.generals.data.map(
         (general) => general.id
       ),
+      xCoord: castle.attributes.x_coord,
+      yCoord: castle.attributes.y_coord,
     };
   });
 
@@ -180,6 +186,8 @@ export const getGameAdapter = (
     return {
       id: town.id,
       name: town.attributes.name,
+      xCoord: town.attributes.x_coord,
+      yCoord: town.attributes.y_coord,
     };
   });
 

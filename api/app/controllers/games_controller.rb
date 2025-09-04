@@ -67,8 +67,8 @@ class GamesController < ApplicationController
   def create_army_from_garrison
     game = current_user.games.find_by(id: params[:id])
     if game
-      generals = General.where(id: params[:selected_general_ids])
-      Castle.find(params[:castle_id]).garrison.create_army(generals)
+      generals = game.world.generals.where(id: params[:selected_general_ids])
+      game.world.castles.find(params[:castle_id]).garrison.create_army(generals)
     else
       render json: { error: 'Game not found' }, status: :not_found
     end
@@ -81,6 +81,18 @@ class GamesController < ApplicationController
       garrison = game.world.map.tiles.find_by(x_coord: army.x_coord, y_coord: army.y_coord).castle.garrison
       generals = game.world.generals.where(id: params[:selected_general_ids])
       army.add_to_garrison(garrison, generals)
+    else
+      render json: { error: 'Game not found' }, status: :not_found
+    end
+  end
+
+  def add_to_army_from_garrison
+    game = current_user.games.find_by(id: params[:id])
+    if game
+      army = game.world.armies.find(params[:army_id])
+      garrison = game.world.castles.find(params[:castle_id]).garrison
+      generals = game.world.generals.where(id: params[:selected_general_ids])
+      garrison.add_to_army(army, generals)
     else
       render json: { error: 'Game not found' }, status: :not_found
     end

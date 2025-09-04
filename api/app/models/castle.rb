@@ -21,6 +21,14 @@ class Castle < ApplicationRecord
     garrison.kingdom&.is_player_kingdom || false
   end
 
+  def x_coord
+    location.tile.x_coord
+  end
+
+  def y_coord
+    location.tile.y_coord
+  end
+
   private
 
   def ensure_garrison
