@@ -6,8 +6,10 @@ import { StoryChoice } from "@/components/StoryChoice";
 import { KingdomsList } from "@/components/KingdomsList";
 import { CastlesList } from "@/components/CastlesList";
 import { ArmiesList } from "@/components/ArmiesList";
+import { useAdvanceTurnForGameMutation } from "@/services/mutationHooks/gameMutationHooks";
 
 export const GameMenuScreen = ({}: {}) => {
+  const advanceGameMutation = useAdvanceTurnForGameMutation();
   const { dispatch: appContextDispatch } = useAppContext();
   const { data: game, isLoading: isLoadingGame } = useGameQuery();
 
@@ -21,6 +23,13 @@ export const GameMenuScreen = ({}: {}) => {
             {game.gameState} Map Tile Count:{" "}
             {game.world?.gameMap?.tiles.length || 0}
             Turn: {game.turn}
+            <button
+              onClick={() => {
+                advanceGameMutation.mutate(game.id);
+              }}
+            >
+              Advance Turn
+            </button>
           </div>
           <button
             onClick={() => {

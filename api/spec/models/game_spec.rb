@@ -4,12 +4,12 @@ require 'rails_helper'
 
 RSpec.describe Game, type: :model do
   let(:user) { create(:user) }
+  let(:game) { create(:game, user: user) }
   let(:game1) { create(:game, user: user, slot: 0, active: true) }
   let(:game2) { create(:game, user: user, slot: 1) }
 
   describe 'Initialization:' do
     it 'initializes correctly' do
-      game = create(:game)
       expect(game).to be_valid
       expect(game.user).to be_a(User)
 
@@ -30,6 +30,12 @@ RSpec.describe Game, type: :model do
 
       game = build(:game, slot: 10)
       expect(game).not_to be_valid
+    end
+
+    it 'can advance turn' do
+      expect(game.turn).to eq(1)
+      game.advance_turn
+      expect(game.turn).to eq(2)
     end
   end
 

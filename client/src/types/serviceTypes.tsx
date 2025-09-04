@@ -23,6 +23,10 @@ export type GameService = {
     id: string,
     storyKey: string
   ) => Promise<AxiosResponse | null>;
+  advanceTurnForGame: (
+    authToken: string,
+    id: string
+  ) => Promise<AxiosResponse | null>;
 };
 
 export type CastleService = {

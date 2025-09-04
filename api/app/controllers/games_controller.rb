@@ -98,6 +98,13 @@ class GamesController < ApplicationController
     end
   end
 
+  def advance_turn
+    game = current_user.games.find_by(id: params[:id])
+    return unless game
+
+    game.advance_turn
+  end
+
   private
 
   def game_params

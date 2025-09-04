@@ -16,6 +16,11 @@ class Game < ApplicationRecord
 
   before_create :set_starting_turn
 
+  def advance_turn
+    self.turn += 1
+    save
+  end
+
   private
 
   def set_starting_turn

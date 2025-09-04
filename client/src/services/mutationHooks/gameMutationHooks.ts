@@ -63,3 +63,17 @@ export const useSetStoryForGameMutation = () => {
     },
   });
 };
+
+export const useAdvanceTurnForGameMutation = () => {
+  const { state: authContextState } = useAuthContext();
+  const { gameService } = useAppContext();
+  const { refetch: refetchGame } = useGameQuery();
+
+  return useMutation({
+    mutationFn: (id: string) =>
+      gameService.advanceTurnForGame(authContextState.authToken!, id),
+    onSuccess: () => {
+      refetchGame();
+    },
+  });
+};

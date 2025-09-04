@@ -59,3 +59,21 @@ export const setStoryForGame = async (
     return null;
   }
 };
+
+export const advanceTurnForGame = async (
+  authToken: string,
+  id: string
+): Promise<AxiosResponse | null> => {
+  try {
+    return await axios.patch(
+      `${apiUrl}/games/${id}/advance_turn`,
+      {},
+      {
+        headers: { Authorization: authToken },
+      }
+    );
+  } catch (err) {
+    console.log("error in advanceTurnForGame", err);
+    return null;
+  }
+};
