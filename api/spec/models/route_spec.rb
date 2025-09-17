@@ -41,6 +41,7 @@ RSpec.describe Route, type: :model do
   end
 
   describe 'Map Gen' do
+    # Move to world gen tests
     it 'generates the routes according to the story settings' do
       expect(map.routes.count).to eq(4)
     end

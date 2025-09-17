@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_04_121754) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_17_142722) do
   create_table "armies", force: :cascade do |t|
     t.integer "kingdom_id", null: false
     t.integer "world_id", null: false
@@ -19,6 +19,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_04_121754) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "route_id"
+    t.string "currently_traveling_route_direction"
     t.index ["kingdom_id"], name: "index_armies_on_kingdom_id"
     t.index ["route_id"], name: "index_armies_on_route_id"
     t.index ["world_id"], name: "index_armies_on_world_id"

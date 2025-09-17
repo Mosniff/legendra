@@ -14,6 +14,16 @@ RSpec.describe Army, type: :model do
       ]
     )
   end
+  let(:army2) do
+    Army.spawn_with_generals(
+      { world: game.world, kingdom: game.world.kingdoms.first, x_coord: 4, y_coord: 4 },
+      [
+        General.create(world: game.world, kingdom: game.world.kingdoms.first),
+        General.create(world: game.world, kingdom: game.world.kingdoms.first),
+        General.create(world: game.world, kingdom: game.world.kingdoms.first)
+      ]
+    )
+  end
 
   it 'initializes correctly' do
     expect(army).to be_valid
@@ -133,21 +143,25 @@ RSpec.describe Army, type: :model do
 
     it 'should be able to be assigned a route starting on the same tile' do
       expect(army.currently_traveling_route).to be_nil
-      route = army.current_location.get_route_to(army.current_location.connected_locations.first)
-      army.assign_to_route(route)
-      expect(army.currently_traveling_route).to be(route)
+      journey = army.current_location.get_journey_to(army.current_location.connected_locations.first)
+      army.assign_to_journey(journey[:route], journey[:direction])
+      expect(army.currently_traveling_route).to be(journey[:route])
     end
 
     it 'should not be able to be assigned a route starting on a different tile' do
       route = Route.where.not(location_a: army.current_location).where.not(location_b: army.current_location).first
       expect do
-        army.assign_to_route(route)
+        army.assign_to_journey(route, 'forwards')
+      end.to raise_error(ArgumentError, 'Route must start on the same tile as the army')
+      expect do
+        army.assign_to_journey(route, 'backwards')
       end.to raise_error(ArgumentError, 'Route must start on the same tile as the army')
     end
 
-    it 'should be able to move along routes' do
-      route = army.current_location.get_route_to(army.current_location.connected_locations.first)
-      army.assign_to_route(route)
+    it 'should be able to move along routes forwards' do
+      journey = army.current_location.get_journey_to(army.current_location.connected_locations.first)
+      route = journey[:route]
+      army.assign_to_journey(route, journey[:direction])
       expect(army.x_coord).to be(route.location_a.tile.x_coord)
       expect(army.y_coord).to be(route.location_a.tile.y_coord)
       army.advance_along_route
@@ -155,9 +169,21 @@ RSpec.describe Army, type: :model do
       expect(army.y_coord).to be(route.path[0][1])
     end
 
+    it 'should be able to move along routes backwards' do
+      journey = army2.current_location.get_journey_to(army2.current_location.connected_locations.first)
+      route = journey[:route]
+      army2.assign_to_journey(route, journey[:direction])
+      expect(army2.x_coord).to be(route.location_b.tile.x_coord)
+      expect(army2.y_coord).to be(route.location_b.tile.y_coord)
+      army2.advance_along_route
+      expect(army2.x_coord).to be(route.path[-1][0])
+      expect(army2.y_coord).to be(route.path[-1][1])
+    end
+
     it 'should unassign route when it reaches the destination' do
-      route = army.current_location.get_route_to(army.current_location.connected_locations.first)
-      army.assign_to_route(route)
+      journey = army.current_location.get_journey_to(army.current_location.connected_locations.first)
+      route = journey[:route]
+      army.assign_to_journey(route, journey[:direction])
       destination_coords = [route.location_b.tile.x_coord, route.location_b.tile.y_coord]
       army.currently_traveling_route.path.length.times do
         army.advance_along_route
@@ -165,6 +191,7 @@ RSpec.describe Army, type: :model do
       expect(army.currently_traveling_route).to be(route)
       army.advance_along_route
       expect(army.currently_traveling_route).to be_nil
+      expect(army.currently_traveling_route_direction).to be_nil
       expect(army.x_coord).to eq(destination_coords[0])
       expect(army.y_coord).to eq(destination_coords[1])
     end

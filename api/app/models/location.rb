@@ -18,7 +18,9 @@ class Location < ApplicationRecord
     routes.map { |route| route.other_end(self) }
   end
 
-  def get_route_to(location)
-    routes.find { |route| route.other_end(self) == location }
+  def get_journey_to(location)
+    route = routes.find { |route| route.other_end(self) == location }
+    direction = route.location_a == self ? 'forwards' : 'backwards'
+    { route: route, direction: direction }
   end
 end

@@ -77,13 +77,21 @@ class Army < ApplicationRecord
     Location.get_location_at(x_coord, y_coord)
   end
 
-  def assign_to_route(route)
-    unless route.location_a.tile.x_coord == x_coord && route.location_a.tile.y_coord == y_coord
+  def assign_to_journey(route, direction)
+    unless (
+      direction == 'forwards' &&
+      route.location_a.tile.x_coord == x_coord &&
+      route.location_a.tile.y_coord == y_coord
+    ) || (
+      direction == 'backwards' &&
+      route.location_b.tile.x_coord == x_coord &&
+      route.location_b.tile.y_coord == y_coord
+    )
       raise ArgumentError,
             'Route must start on the same tile as the army'
     end
 
-    update!(currently_traveling_route: route)
+    update!(currently_traveling_route: route, currently_traveling_route_direction: direction)
   end
 
   def advance_along_route
@@ -92,21 +100,43 @@ class Army < ApplicationRecord
             'Army is not currently traveling along a route'
     end
 
-    if current_location == currently_traveling_route.location_a
-      next_position = currently_traveling_route.path[0]
+    if currently_traveling_route_direction == 'forwards'
 
-    elsif x_coord == currently_traveling_route.path[-1][0] && y_coord == currently_traveling_route.path[-1][1]
-      destination_tile = currently_traveling_route.location_b.tile
-      next_position = [destination_tile.x_coord, destination_tile.y_coord]
+      if current_location == currently_traveling_route.location_a
+        next_position = currently_traveling_route.path[0]
+
+      elsif x_coord == currently_traveling_route.path[-1][0] && y_coord == currently_traveling_route.path[-1][1]
+        destination_tile = currently_traveling_route.location_b.tile
+        next_position = [destination_tile.x_coord, destination_tile.y_coord]
+      else
+        current_path_index = currently_traveling_route.find_path_index_from_coords(x_coord, y_coord)
+        next_position = currently_traveling_route.path[current_path_index + 1]
+      end
+
+      move_to(next_position[0], next_position[1])
+      return unless current_location == currently_traveling_route.location_b
+
+    elsif currently_traveling_route_direction == 'backwards'
+
+      if current_location == currently_traveling_route.location_b
+        next_position = currently_traveling_route.path[-1]
+
+      elsif x_coord == currently_traveling_route.path[0][0] && y_coord == currently_traveling_route.path[0][1]
+        destination_tile = currently_traveling_route.location_a.tile
+        next_position = [destination_tile.x_coord, destination_tile.y_coord]
+      else
+        current_path_index = currently_traveling_route.find_path_index_from_coords(x_coord, y_coord)
+        next_position = currently_traveling_route.path[current_path_index - 1]
+      end
+
+      move_to(next_position[0], next_position[1])
+      return unless current_location == currently_traveling_route.location_a
+
     else
-      current_path_index = currently_traveling_route.find_path_index_from_coords(x_coord, y_coord)
-      next_position = currently_traveling_route.path[current_path_index + 1]
+      raise ArgumentError, 'Invalid route direction'
     end
 
-    move_to(next_position[0], next_position[1])
-    return unless current_location == currently_traveling_route.location_b
-
-    update!(currently_traveling_route: nil)
+    update!(currently_traveling_route: nil, currently_traveling_route_direction: nil)
   end
 
   private

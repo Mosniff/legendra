@@ -18,6 +18,9 @@ class Game < ApplicationRecord
 
   def advance_turn
     self.turn += 1
+    world.armies.each do |army|
+      army.advance_along_route if army.currently_traveling_route
+    end
     save
   end
 

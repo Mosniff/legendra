@@ -21,11 +21,21 @@ RSpec.describe Location, type: :model do
     expect(location1.connected_locations[1].locatable).to be_a(Castle)
   end
 
-  it 'should be able to grab a route to a given location' do
-    expect(location1.get_route_to(location3)).to be_a(Route)
+  it 'should be able to grab a route and direction to a given location' do
+    journey1 = location1.get_journey_to(location2)
+    expect(journey1[:route]).to be_a(Route)
+    expect(journey1[:direction]).to eq('forwards')
+    expect(journey1[:route].location_a_id).to eq(location1.id)
+    expect(journey1[:route].location_b_id).to eq(location2.id)
+    journey2 = location2.get_journey_to(location1)
+    expect(journey2[:route]).to be_a(Route)
+    expect(journey2[:direction]).to eq('backwards')
+    expect(journey2[:route].location_a_id).to eq(location1.id)
+    expect(journey2[:route].location_b_id).to eq(location2.id)
   end
 
   describe 'Map Gen' do
+    # move to world gen tests
     it 'generates the locations according to the story settings' do
       expect(location1).to be_a(Location)
       expect(location1.locatable).to be_a(Castle)
