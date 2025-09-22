@@ -101,35 +101,11 @@ class Army < ApplicationRecord
     end
 
     if currently_traveling_route_direction == 'forwards'
-
-      if current_location == currently_traveling_route.location_a
-        next_position = currently_traveling_route.path[0]
-
-      elsif x_coord == currently_traveling_route.path[-1][0] && y_coord == currently_traveling_route.path[-1][1]
-        destination_tile = currently_traveling_route.location_b.tile
-        next_position = [destination_tile.x_coord, destination_tile.y_coord]
-      else
-        current_path_index = currently_traveling_route.find_path_index_from_coords(x_coord, y_coord)
-        next_position = currently_traveling_route.path[current_path_index + 1]
-      end
-
-      move_to(next_position[0], next_position[1])
+      move_forwards_along_route
       return unless current_location == currently_traveling_route.location_b
 
     elsif currently_traveling_route_direction == 'backwards'
-
-      if current_location == currently_traveling_route.location_b
-        next_position = currently_traveling_route.path[-1]
-
-      elsif x_coord == currently_traveling_route.path[0][0] && y_coord == currently_traveling_route.path[0][1]
-        destination_tile = currently_traveling_route.location_a.tile
-        next_position = [destination_tile.x_coord, destination_tile.y_coord]
-      else
-        current_path_index = currently_traveling_route.find_path_index_from_coords(x_coord, y_coord)
-        next_position = currently_traveling_route.path[current_path_index - 1]
-      end
-
-      move_to(next_position[0], next_position[1])
+      move_backwards_along_route
       return unless current_location == currently_traveling_route.location_a
 
     else
@@ -145,5 +121,56 @@ class Army < ApplicationRecord
     raise ArgumentError, 'Can only move to adjacent tiles' if (new_x - x_coord).abs > 1 || (new_y - y_coord).abs > 1
 
     update!(x_coord: new_x, y_coord: new_y)
+  end
+
+  def move_forwards_along_route
+    if current_location == currently_traveling_route.location_a
+      next_position = currently_traveling_route.path[0]
+
+    elsif x_coord == currently_traveling_route.path[-1][0] && y_coord == currently_traveling_route.path[-1][1]
+      destination_tile = currently_traveling_route.location_b.tile
+      next_position = [destination_tile.x_coord, destination_tile.y_coord]
+    else
+      current_path_index = currently_traveling_route.find_path_index_from_coords(x_coord, y_coord)
+      next_position = currently_traveling_route.path[current_path_index + 1]
+    end
+
+    move_to(next_position[0], next_position[1])
+    update!(to_move: false)
+    check_for_clash
+  end
+
+  def move_backwards_along_route
+    if current_location == currently_traveling_route.location_b
+      next_position = currently_traveling_route.path[-1]
+
+    elsif x_coord == currently_traveling_route.path[0][0] && y_coord == currently_traveling_route.path[0][1]
+      destination_tile = currently_traveling_route.location_a.tile
+      next_position = [destination_tile.x_coord, destination_tile.y_coord]
+    else
+      current_path_index = currently_traveling_route.find_path_index_from_coords(x_coord, y_coord)
+      next_position = currently_traveling_route.path[current_path_index - 1]
+    end
+
+    move_to(next_position[0], next_position[1])
+    update!(to_move: false)
+    check_for_clash
+  end
+
+  def check_for_clash
+    opposing_army = world.armies.find do |army|
+      army.kingdom != kingdom && army.x_coord == x_coord && army.y_coord == y_coord
+    end
+    return unless opposing_army
+
+    Battle.create!(
+      side_a: kingdom,
+      side_b: opposing_army.kingdom,
+      tile: tile,
+      world: world,
+      turn: world.game.turn
+    )
+    # TODO: run battle here, OR set to needs player input if player controlled army involved
+    # TODO: shunt losing army away to adjacent tile
   end
 end

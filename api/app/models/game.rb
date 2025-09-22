@@ -6,7 +6,7 @@ class Game < ApplicationRecord
   validates :slot, presence: true, inclusion: { in: 0..9 }
   validates :slot, uniqueness: { scope: :user_id }
 
-  GAME_STATES = %w[story_choice in_progress].freeze
+  GAME_STATES = %w[story_choice orders_phase resolving_movement].freeze
   validates :game_state, inclusion: { in: GAME_STATES }
 
   has_one :world, dependent: :destroy
@@ -16,15 +16,23 @@ class Game < ApplicationRecord
 
   before_create :set_starting_turn
 
-  def advance_turn
-    self.turn += 1
-    world.armies.each do |army|
-      army.advance_along_route if army.currently_traveling_route
+  def attempt_advance_turn
+    if game_state == 'orders_phase'
+      world.set_armies_to_move
+      update(game_state: 'resolving_movement')
     end
-    save
+
+    world.armies_to_move.first.advance_along_route while game_state == 'resolving_movement' && world.armies_to_move.any?
+
+    advance_turn if game_state == 'resolving_movement' && world.armies_to_move.empty?
   end
 
   private
+
+  def advance_turn
+    self.turn += 1
+    save
+  end
 
   def set_starting_turn
     self.turn ||= 1

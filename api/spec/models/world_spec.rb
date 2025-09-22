@@ -28,7 +28,7 @@ RSpec.describe World, type: :model do
 
     it 'can only assign story whilst in the correct game_state' do
       world.select_story('test_story')
-      expect(game.game_state).to eq('in_progress')
+      expect(game.game_state).to eq('orders_phase')
       expect do
         world.select_story('test_story')
       end.to raise_error(RuntimeError, 'Game state must be story_choice to assign a story.')

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_22_140701) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_22_155543) do
   create_table "armies", force: :cascade do |t|
     t.integer "kingdom_id", null: false
     t.integer "world_id", null: false
@@ -32,7 +32,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_22_140701) do
     t.integer "tile_id", null: false
     t.integer "world_id", null: false
     t.integer "turn", null: false
-    t.string "state", default: "awaiting resolution", null: false
+    t.string "state", default: "awaiting_resolution", null: false
     t.boolean "is_draw", default: false, null: false
     t.integer "winner_id"
     t.datetime "created_at", null: false

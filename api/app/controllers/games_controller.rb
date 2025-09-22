@@ -102,7 +102,7 @@ class GamesController < ApplicationController
     game = current_user.games.find_by(id: params[:id])
     return unless game
 
-    game.advance_turn
+    game.attempt_advance_turn
   end
 
   private

@@ -12,7 +12,7 @@ RSpec.describe Battle, type: :model do
     expect(battle.side_b).to be_a(Kingdom)
     expect(battle.tile).to be_a(Tile)
     expect(battle.turn).to be_a(Integer)
-    expect(battle.state).to eq('awaiting resolution')
+    expect(battle.state).to eq('awaiting_resolution')
     expect(battle.is_draw).to be(false)
     expect(battle.winner).to be_nil
   end

@@ -6,7 +6,7 @@ class CreateBattles < ActiveRecord::Migration[7.1]
       t.references :tile, null: false, foreign_key: true
       t.references :world, null: false, foreign_key: true
       t.integer :turn, null: false
-      t.string :state, null: false, default: 'awaiting resolution'
+      t.string :state, null: false, default: 'awaiting_resolution'
       t.boolean :is_draw, null: false, default: false
       t.references :winner, foreign_key: { to_table: :kingdoms }
 

@@ -7,12 +7,13 @@ class World < ApplicationRecord
   has_many :kingdoms, dependent: :destroy
   has_many :generals, dependent: :destroy
   has_many :armies, dependent: :destroy
+  has_many :battles, dependent: :destroy
 
   def select_story(template_name)
     raise 'Game state must be story_choice to assign a story.' if game.game_state != 'story_choice'
 
     WorldGenerationService.new(game: game, story_template_key: template_name).generate_world!
-    game.update(game_state: 'in_progress')
+    game.update(game_state: 'orders_phase')
   end
 
   def player_kingdom

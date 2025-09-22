@@ -56,7 +56,7 @@ RSpec.describe Game, type: :model do
   describe 'Turns' do
     it 'can advance turn' do
       expect(game_with_story.turn).to eq(1)
-      game_with_story.advance_turn
+      game_with_story.attempt_advance_turn
       expect(game_with_story.turn).to eq(2)
     end
 
@@ -95,13 +95,33 @@ RSpec.describe Game, type: :model do
       expect(army1.y_coord).to eq(0)
       expect(army2.x_coord).to eq(4)
       expect(army2.y_coord).to eq(4)
-      game_with_story.advance_turn
+      game_with_story.attempt_advance_turn
       army1.reload
       army2.reload
       expect(army1.x_coord).to eq(1)
       expect(army1.y_coord).to eq(1)
       expect(army2.x_coord).to eq(3)
       expect(army2.y_coord).to eq(3)
+    end
+
+    it 'should make AI armies have a battle if they meet' do
+      world = game_with_story.world
+      army1 = Army.spawn_with_generals(
+        { world: world, kingdom: world.kingdoms.where(is_player_kingdom: false).first, x_coord: 0, y_coord: 0 },
+        [General.create(world: world, kingdom: world.kingdoms.first)]
+      )
+      army2 = Army.spawn_with_generals(
+        { world: world, kingdom: world.kingdoms.where(is_player_kingdom: false).last, x_coord: 0, y_coord: 2 },
+        [General.create(world: world, kingdom: world.kingdoms.last)]
+      )
+      journey1 = army1.current_location.get_journey_to(army2.current_location)
+      journey2 = army2.current_location.get_journey_to(army1.current_location)
+      army1.assign_to_journey(journey1[:route], journey1[:direction])
+      army2.assign_to_journey(journey2[:route], journey2[:direction])
+      expect(world.battles.count).to eq(0)
+      game_with_story.attempt_advance_turn
+      expect(world.battles.count).to eq(1)
+      expect(world.battles.where(state: 'completed').count).to eq(1)
     end
   end
 end
