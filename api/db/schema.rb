@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_17_142722) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_22_140701) do
   create_table "armies", force: :cascade do |t|
     t.integer "kingdom_id", null: false
     t.integer "world_id", null: false
@@ -23,6 +23,24 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_17_142722) do
     t.index ["kingdom_id"], name: "index_armies_on_kingdom_id"
     t.index ["route_id"], name: "index_armies_on_route_id"
     t.index ["world_id"], name: "index_armies_on_world_id"
+  end
+
+  create_table "battles", force: :cascade do |t|
+    t.integer "side_a_id", null: false
+    t.integer "side_b_id", null: false
+    t.integer "tile_id", null: false
+    t.integer "world_id", null: false
+    t.integer "turn", null: false
+    t.string "state", default: "awaiting resolution", null: false
+    t.boolean "is_draw", default: false, null: false
+    t.integer "winner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["side_a_id"], name: "index_battles_on_side_a_id"
+    t.index ["side_b_id"], name: "index_battles_on_side_b_id"
+    t.index ["tile_id"], name: "index_battles_on_tile_id"
+    t.index ["winner_id"], name: "index_battles_on_winner_id"
+    t.index ["world_id"], name: "index_battles_on_world_id"
   end
 
   create_table "castles", force: :cascade do |t|
@@ -161,6 +179,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_17_142722) do
   add_foreign_key "armies", "kingdoms"
   add_foreign_key "armies", "routes"
   add_foreign_key "armies", "worlds"
+  add_foreign_key "battles", "kingdoms", column: "side_a_id"
+  add_foreign_key "battles", "kingdoms", column: "side_b_id"
+  add_foreign_key "battles", "kingdoms", column: "winner_id"
+  add_foreign_key "battles", "tiles"
+  add_foreign_key "battles", "worlds"
   add_foreign_key "castles", "kingdoms"
   add_foreign_key "games", "users"
   add_foreign_key "garrisons", "castles"
