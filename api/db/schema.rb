@@ -20,6 +20,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_22_140701) do
     t.datetime "updated_at", null: false
     t.integer "route_id"
     t.string "currently_traveling_route_direction"
+    t.boolean "to_move", default: false
     t.index ["kingdom_id"], name: "index_armies_on_kingdom_id"
     t.index ["route_id"], name: "index_armies_on_route_id"
     t.index ["world_id"], name: "index_armies_on_world_id"

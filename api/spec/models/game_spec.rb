@@ -60,6 +60,23 @@ RSpec.describe Game, type: :model do
       expect(game_with_story.turn).to eq(2)
     end
 
+    it 'should set which armies need to move' do
+      world = game_with_story.world
+      army1 = Army.spawn_with_generals(
+        { world: world, kingdom: world.kingdoms.first, x_coord: 0, y_coord: 0 },
+        [General.create(world: world, kingdom: world.kingdoms.first)]
+      )
+      journey1 = army1.current_location.get_journey_to(Location.get_location_at(4, 4))
+      army1.assign_to_journey(journey1[:route], journey1[:direction])
+
+      expect(world.armies_to_move.count).to eq(0)
+
+      game_with_story.world.set_armies_to_move
+
+      expect(world.armies_to_move.count).to eq(1)
+      expect(world.armies_to_move.first).to be_a(Army)
+    end
+
     it 'should move armies for each kingdom along their routes' do
       world = game_with_story.world
       army1 = Army.spawn_with_generals(

@@ -26,4 +26,12 @@ class World < ApplicationRecord
   def towns
     map&.towns
   end
+
+  def set_armies_to_move
+    armies.where.not(route_id: nil).update_all(to_move: true)
+  end
+
+  def armies_to_move
+    armies.where(to_move: true)
+  end
 end
