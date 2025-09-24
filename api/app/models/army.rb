@@ -163,13 +163,14 @@ class Army < ApplicationRecord
     end
     return unless opposing_army
 
-    Battle.create!(
+    battle = Battle.create!(
       side_a: kingdom,
       side_b: opposing_army.kingdom,
       tile: tile,
       world: world,
       turn: world.game.turn
     )
+    battle.resolve_battle
     # TODO: run battle here, OR set to needs player input if player controlled army involved
     # TODO: shunt losing army away to adjacent tile
   end
