@@ -15,17 +15,21 @@ class Battle < ApplicationRecord
 
     raise ArgumentError, 'Both armies must be on the battle tile' unless army1.tile == tile && army2.tile == tile
 
+    update(state: 'completed')
     if force_draw
       self.is_draw = true
       self.winner = nil
     else
-      self.winner = randomly_determine_winner(army1, army2)
+      winning_army = randomly_determine_winner(army1, army2)
+      losing_army = (winning_army == army1 ? army2 : army1)
+      self.winner = winning_army.kingdom
+      losing_army.retreat
     end
-    update(state: 'completed')
+    save!
   end
 
   def randomly_determine_winner(army1, army2)
-    # TODO implement actual battle logic
-    [army1, army2].sample.kingdom
+    # TODO: implement actual battle logic
+    [army1, army2].sample
   end
 end

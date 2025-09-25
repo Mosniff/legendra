@@ -65,6 +65,10 @@ class Army < ApplicationRecord
     world.map.tiles.find { |tile| tile.x_coord == x_coord && tile.y_coord == y_coord }
   end
 
+  def coords
+    [x_coord, y_coord]
+  end
+
   def player_controlled?
     kingdom&.is_player_kingdom || false
   end
@@ -115,6 +119,16 @@ class Army < ApplicationRecord
     update!(currently_traveling_route: nil, currently_traveling_route_direction: nil)
   end
 
+  def retreat
+    if currently_traveling_route &&
+       current_location != currently_traveling_route.location_a &&
+       current_location != currently_traveling_route.location_b
+      retreat_along_route
+    else
+      retreat_randomly
+    end
+  end
+
   private
 
   def move_to(new_x, new_y)
@@ -123,8 +137,16 @@ class Army < ApplicationRecord
     update!(x_coord: new_x, y_coord: new_y)
   end
 
+  def at_route_start
+    currently_traveling_route && current_location == currently_traveling_route.location_a
+  end
+
+  def at_route_end
+    currently_traveling_route && current_location == currently_traveling_route.location_b
+  end
+
   def move_forwards_along_route
-    if current_location == currently_traveling_route.location_a
+    if at_route_start
       next_position = currently_traveling_route.path[0]
 
     elsif x_coord == currently_traveling_route.path[-1][0] && y_coord == currently_traveling_route.path[-1][1]
@@ -141,7 +163,7 @@ class Army < ApplicationRecord
   end
 
   def move_backwards_along_route
-    if current_location == currently_traveling_route.location_b
+    if at_route_end
       next_position = currently_traveling_route.path[-1]
 
     elsif x_coord == currently_traveling_route.path[0][0] && y_coord == currently_traveling_route.path[0][1]
@@ -170,8 +192,16 @@ class Army < ApplicationRecord
       world: world,
       turn: world.game.turn
     )
-    battle.resolve_battle
+    battle.resolve_battle(self, opposing_army)
     # TODO: run battle here, OR set to needs player input if player controlled army involved
     # TODO: shunt losing army away to adjacent tile
   end
+
+  def retreat_along_route
+    new_direction = currently_traveling_route_direction == 'forwards' ? 'backwards' : 'forwards'
+    update(currently_traveling_route_direction: new_direction)
+    advance_along_route
+  end
+
+  def retreat_randomly; end
 end

@@ -19,6 +19,12 @@ RSpec.describe Battle, type: :model do
       [General.create(world: world, kingdom: world.kingdoms.last)]
     )
   end
+  let(:army3) do
+    Army.spawn_with_generals(
+      { world: world, kingdom: world.kingdoms.where(is_player_kingdom: false).last, x_coord: 4, y_coord: 4 },
+      [General.create(world: world, kingdom: world.kingdoms.last)]
+    )
+  end
   it 'initializes correctly' do
     expect(battle).to be_valid
     expect(battle.side_a).to be_a(Kingdom)
@@ -38,12 +44,8 @@ RSpec.describe Battle, type: :model do
     end
 
     it 'both armies must be on the correct tile' do
-      wrong_tile_army = Army.spawn_with_generals(
-        { world: world, kingdom: world.kingdoms.where(is_player_kingdom: false).last, x_coord: 0, y_coord: 1 },
-        [General.create(world: world, kingdom: world.kingdoms.last)]
-      )
       expect do
-        battle.resolve_battle(army1, wrong_tile_army)
+        battle.resolve_battle(army1, army3)
       end.to raise_error(ArgumentError, 'Both armies must be on the battle tile')
     end
     it 'can have a winner' do
@@ -53,7 +55,7 @@ RSpec.describe Battle, type: :model do
       expect(battle.is_draw).to be(false)
     end
 
-    it 'can be draw' do
+    it 'can be a draw' do
       battle.resolve_battle(army1, army2, force_draw: true)
       expect(battle.state).to eq('completed')
       expect(battle.winner).to be_nil
@@ -81,18 +83,33 @@ RSpec.describe Battle, type: :model do
 
   describe 'Retreating' do
     it 'should send an army in the middle of a route back the way it came' do
+      journey1 = army1.current_location.get_journey_to(army3.current_location)
+      journey2 = army3.current_location.get_journey_to(army1.current_location)
+      army1.assign_to_journey(journey1[:route], journey1[:direction])
+      army3.assign_to_journey(journey2[:route], journey2[:direction])
+      army1.advance_along_route
+      army3.advance_along_route
+      army1.advance_along_route
+      expect(Battle.count).to eq(0)
+      army1.reload
+      army3.reload
+      army3.advance_along_route
+      expect(Battle.count).to eq(1)
+      army1.reload
+      army3.reload
+      expect([army1.coords, army3.coords]).to include([2, 2])
+      expect([army1.coords, army3.coords]).to include([1, 1]).or include([3, 3])
+    end
+
+    it 'should send an army at the start of its route randomly in some direction' do
       skip 'Not implemented yet'
     end
 
-    it 'should send an army at the start of its route ...' do
+    it 'should send a stationary army randomly in some direction' do
       skip 'Not implemented yet'
     end
 
-    it 'should send a stationary army ...' do
-      skip 'Not implemented yet'
-    end
-
-    it 'should send a fleeing garrison ...' do
+    it 'should send a fleeing garrison randomly in some direction' do
       skip 'Not implemented yet'
     end
   end
