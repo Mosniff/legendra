@@ -67,7 +67,7 @@ RSpec.describe Game, type: :model do
         [General.create(world: world, kingdom: world.kingdoms.first)]
       )
       journey1 = army1.current_location.get_journey_to(Location.get_location_at(4, 4))
-      army1.assign_to_journey(journey1[:route], journey1[:direction])
+      army1.assign_to_journey(journey1)
 
       expect(world.armies_to_move.count).to eq(0)
 
@@ -89,8 +89,8 @@ RSpec.describe Game, type: :model do
       )
       journey1 = army1.current_location.get_journey_to(army2.current_location)
       journey2 = army2.current_location.get_journey_to(army1.current_location)
-      army1.assign_to_journey(journey1[:route], journey1[:direction])
-      army2.assign_to_journey(journey2[:route], journey2[:direction])
+      army1.assign_to_journey(journey1)
+      army2.assign_to_journey(journey2)
       expect(army1.x_coord).to eq(0)
       expect(army1.y_coord).to eq(0)
       expect(army2.x_coord).to eq(4)
@@ -116,8 +116,8 @@ RSpec.describe Game, type: :model do
       )
       journey1 = army1.current_location.get_journey_to(army2.current_location)
       journey2 = army2.current_location.get_journey_to(army1.current_location)
-      army1.assign_to_journey(journey1[:route], journey1[:direction])
-      army2.assign_to_journey(journey2[:route], journey2[:direction])
+      army1.assign_to_journey(journey1)
+      army2.assign_to_journey(journey2)
       expect(world.battles.count).to eq(0)
       game_with_story.attempt_advance_turn
       expect(world.battles.count).to eq(1)

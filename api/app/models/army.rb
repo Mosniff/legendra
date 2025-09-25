@@ -81,7 +81,9 @@ class Army < ApplicationRecord
     Location.get_location_at(x_coord, y_coord)
   end
 
-  def assign_to_journey(route, direction)
+  def assign_to_journey(journey)
+    route = journey[:route]
+    direction = journey[:direction]
     unless (
       direction == 'forwards' &&
       route.location_a.tile.x_coord == x_coord &&
@@ -98,18 +100,22 @@ class Army < ApplicationRecord
     update!(currently_traveling_route: route, currently_traveling_route_direction: direction)
   end
 
-  def advance_along_route
+  def clear_journey
+    update!(currently_traveling_route: nil, currently_traveling_route_direction: nil)
+  end
+
+  def advance_along_route(forced_winner: nil)
     unless currently_traveling_route
       raise ArgumentError,
             'Army is not currently traveling along a route'
     end
 
     if currently_traveling_route_direction == 'forwards'
-      move_forwards_along_route
+      move_forwards_along_route(forced_winner: forced_winner)
       return unless current_location == currently_traveling_route.location_b
 
     elsif currently_traveling_route_direction == 'backwards'
-      move_backwards_along_route
+      move_backwards_along_route(forced_winner: forced_winner)
       return unless current_location == currently_traveling_route.location_a
 
     else
@@ -145,7 +151,7 @@ class Army < ApplicationRecord
     currently_traveling_route && current_location == currently_traveling_route.location_b
   end
 
-  def move_forwards_along_route
+  def move_forwards_along_route(forced_winner: nil)
     if at_route_start
       next_position = currently_traveling_route.path[0]
 
@@ -159,10 +165,10 @@ class Army < ApplicationRecord
 
     move_to(next_position[0], next_position[1])
     update!(to_move: false)
-    check_for_clash
+    check_for_clash(forced_winner: forced_winner)
   end
 
-  def move_backwards_along_route
+  def move_backwards_along_route(forced_winner: nil)
     if at_route_end
       next_position = currently_traveling_route.path[-1]
 
@@ -176,10 +182,11 @@ class Army < ApplicationRecord
 
     move_to(next_position[0], next_position[1])
     update!(to_move: false)
-    check_for_clash
+    check_for_clash(forced_winner: forced_winner)
   end
 
-  def check_for_clash
+  def check_for_clash(forced_winner: nil)
+    # TODO check for multiple armies on same tile and run clashes seuqentially
     opposing_army = world.armies.find do |army|
       army.kingdom != kingdom && army.x_coord == x_coord && army.y_coord == y_coord
     end
@@ -192,9 +199,8 @@ class Army < ApplicationRecord
       world: world,
       turn: world.game.turn
     )
-    battle.resolve_battle(self, opposing_army)
+    battle.resolve_battle(self, opposing_army, forced_winner: forced_winner)
     # TODO: run battle here, OR set to needs player input if player controlled army involved
-    # TODO: shunt losing army away to adjacent tile
   end
 
   def retreat_along_route
@@ -203,5 +209,11 @@ class Army < ApplicationRecord
     advance_along_route
   end
 
-  def retreat_randomly; end
+  def retreat_randomly
+    raise 'Cannot retreat randomly when not on a location' unless current_location
+
+    retreating_location = current_location.connected_locations.sample
+    assign_to_journey(current_location.get_journey_to(retreating_location))
+    advance_along_route
+  end
 end

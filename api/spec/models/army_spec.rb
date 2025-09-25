@@ -144,24 +144,24 @@ RSpec.describe Army, type: :model do
     it 'should be able to be assigned a route starting on the same tile' do
       expect(army.currently_traveling_route).to be_nil
       journey = army.current_location.get_journey_to(army.current_location.connected_locations.first)
-      army.assign_to_journey(journey[:route], journey[:direction])
+      army.assign_to_journey(journey)
       expect(army.currently_traveling_route).to be(journey[:route])
     end
 
     it 'should not be able to be assigned a route starting on a different tile' do
       route = Route.where.not(location_a: army.current_location).where.not(location_b: army.current_location).first
       expect do
-        army.assign_to_journey(route, 'forwards')
+        army.assign_to_journey(route: route, direction: 'forwards')
       end.to raise_error(ArgumentError, 'Route must start on the same tile as the army')
       expect do
-        army.assign_to_journey(route, 'backwards')
+        army.assign_to_journey(route: route, direction: 'backwards')
       end.to raise_error(ArgumentError, 'Route must start on the same tile as the army')
     end
 
     it 'should be able to move along routes forwards' do
       journey = army.current_location.get_journey_to(army.current_location.connected_locations.first)
       route = journey[:route]
-      army.assign_to_journey(route, journey[:direction])
+      army.assign_to_journey(journey)
       expect(army.x_coord).to be(route.location_a.tile.x_coord)
       expect(army.y_coord).to be(route.location_a.tile.y_coord)
       army.advance_along_route
@@ -172,7 +172,7 @@ RSpec.describe Army, type: :model do
     it 'should be able to move along routes backwards' do
       journey = army2.current_location.get_journey_to(army2.current_location.connected_locations.first)
       route = journey[:route]
-      army2.assign_to_journey(route, journey[:direction])
+      army2.assign_to_journey(journey)
       expect(army2.x_coord).to be(route.location_b.tile.x_coord)
       expect(army2.y_coord).to be(route.location_b.tile.y_coord)
       army2.advance_along_route
@@ -183,7 +183,7 @@ RSpec.describe Army, type: :model do
     it 'should unassign route when it reaches the destination' do
       journey = army.current_location.get_journey_to(army.current_location.connected_locations.first)
       route = journey[:route]
-      army.assign_to_journey(route, journey[:direction])
+      army.assign_to_journey(journey)
       destination_coords = [route.location_b.tile.x_coord, route.location_b.tile.y_coord]
       army.currently_traveling_route.path.length.times do
         army.advance_along_route

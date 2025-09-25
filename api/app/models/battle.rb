@@ -8,7 +8,7 @@ class Battle < ApplicationRecord
   BATTLE_STATES = %w[awaiting_resolution completed].freeze
   validates :state, inclusion: { in: BATTLE_STATES }
 
-  def resolve_battle(army1, army2, force_draw: false)
+  def resolve_battle(army1, army2, force_draw: false, forced_winner: nil)
     unless army1.is_a?(Army) && army2.is_a?(Army) && army1.kingdom != army2.kingdom
       raise ArgumentError, 'Must have two opposing armies'
     end
@@ -19,6 +19,11 @@ class Battle < ApplicationRecord
     if force_draw
       self.is_draw = true
       self.winner = nil
+    elsif forced_winner
+      winning_army = [army1, army2].find { |a| a.kingdom == forced_winner }
+      losing_army = (winning_army == army1 ? army2 : army1)
+      self.winner = winning_army.kingdom
+      losing_army.retreat
     else
       winning_army = randomly_determine_winner(army1, army2)
       losing_army = (winning_army == army1 ? army2 : army1)

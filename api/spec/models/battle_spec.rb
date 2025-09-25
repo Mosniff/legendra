@@ -82,11 +82,13 @@ RSpec.describe Battle, type: :model do
   end
 
   describe 'Retreating' do
-    it 'should send an army in the middle of a route back the way it came' do
+    before do
       journey1 = army1.current_location.get_journey_to(army3.current_location)
       journey2 = army3.current_location.get_journey_to(army1.current_location)
-      army1.assign_to_journey(journey1[:route], journey1[:direction])
-      army3.assign_to_journey(journey2[:route], journey2[:direction])
+      army1.assign_to_journey(journey1)
+      army3.assign_to_journey(journey2)
+    end
+    it 'should send an army in the middle of a route back the way it came' do
       army1.advance_along_route
       army3.advance_along_route
       army1.advance_along_route
@@ -102,15 +104,37 @@ RSpec.describe Battle, type: :model do
     end
 
     it 'should send an army at the start of its route randomly in some direction' do
-      skip 'Not implemented yet'
+      possible_retreating_routes = army1.current_location.routes
+      army3.advance_along_route
+      army3.advance_along_route
+      army3.advance_along_route
+      expect(Battle.count).to eq(0)
+      army3.reload
+      army3.advance_along_route(forced_winner: army3.kingdom)
+      expect(Battle.count).to eq(1)
+      army1.reload
+      expect(army1.coords).to eq([1, 1]).or eq([0, 1])
+      expect(possible_retreating_routes).to include(army1.currently_traveling_route)
     end
 
     it 'should send a stationary army randomly in some direction' do
-      skip 'Not implemented yet'
+      possible_retreating_routes = army1.current_location.routes
+      army1.clear_journey
+      army3.advance_along_route
+      army3.advance_along_route
+      army3.advance_along_route
+      expect(Battle.count).to eq(0)
+      army3.reload
+      army3.advance_along_route(forced_winner: army3.kingdom)
+      expect(Battle.count).to eq(1)
+      army1.reload
+      expect(army1.coords).to eq([1, 1]).or eq([0, 1])
+      expect(possible_retreating_routes).to include(army1.currently_traveling_route)
     end
 
     it 'should send a fleeing garrison randomly in some direction' do
       skip 'Not implemented yet'
+      # expect retreating army to be on a new route
     end
   end
 end
