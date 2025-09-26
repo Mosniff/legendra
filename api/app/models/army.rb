@@ -104,25 +104,23 @@ class Army < ApplicationRecord
     update!(currently_traveling_route: nil, currently_traveling_route_direction: nil)
   end
 
-  def advance_along_route(forced_winner: nil)
+  def advance_along_route(forced_winner: nil, retreating: false)
     unless currently_traveling_route
       raise ArgumentError,
             'Army is not currently traveling along a route'
     end
 
     if currently_traveling_route_direction == 'forwards'
-      move_forwards_along_route(forced_winner: forced_winner)
-      return unless current_location == currently_traveling_route.location_b
+      move_forwards_along_route(forced_winner: forced_winner, retreating: retreating)
+      clear_journey if currently_traveling_route && current_location == currently_traveling_route.location_b
 
     elsif currently_traveling_route_direction == 'backwards'
-      move_backwards_along_route(forced_winner: forced_winner)
-      return unless current_location == currently_traveling_route.location_a
+      move_backwards_along_route(forced_winner: forced_winner, retreating: retreating)
+      clear_journey if currently_traveling_route && current_location == currently_traveling_route.location_a
 
     else
       raise ArgumentError, 'Invalid route direction'
     end
-
-    update!(currently_traveling_route: nil, currently_traveling_route_direction: nil)
   end
 
   def retreat
@@ -151,7 +149,7 @@ class Army < ApplicationRecord
     currently_traveling_route && current_location == currently_traveling_route.location_b
   end
 
-  def move_forwards_along_route(forced_winner: nil)
+  def move_forwards_along_route(forced_winner: nil, retreating: false)
     if at_route_start
       next_position = currently_traveling_route.path[0]
 
@@ -164,11 +162,11 @@ class Army < ApplicationRecord
     end
 
     move_to(next_position[0], next_position[1])
-    update!(to_move: false)
+    update!(to_move: false) unless retreating
     check_for_clash(forced_winner: forced_winner)
   end
 
-  def move_backwards_along_route(forced_winner: nil)
+  def move_backwards_along_route(forced_winner: nil, retreating: false)
     if at_route_end
       next_position = currently_traveling_route.path[-1]
 
@@ -181,17 +179,19 @@ class Army < ApplicationRecord
     end
 
     move_to(next_position[0], next_position[1])
-    update!(to_move: false)
+    update!(to_move: false) unless retreating
     check_for_clash(forced_winner: forced_winner)
   end
 
   def check_for_clash(forced_winner: nil)
-    # TODO check for multiple armies on same tile and run clashes seuqentially
-    opposing_army = world.armies.find do |army|
-      army.kingdom != kingdom && army.x_coord == x_coord && army.y_coord == y_coord
+    while (opposing_army = world.armies.where.not(kingdom_id: kingdom_id)
+                                   .where(x_coord: x_coord, y_coord: y_coord)
+                                   .first)
+      run_battle(opposing_army, forced_winner: forced_winner)
     end
-    return unless opposing_army
+  end
 
+  def run_battle(opposing_army, forced_winner: nil)
     battle = Battle.create!(
       side_a: kingdom,
       side_b: opposing_army.kingdom,
@@ -206,7 +206,7 @@ class Army < ApplicationRecord
   def retreat_along_route
     new_direction = currently_traveling_route_direction == 'forwards' ? 'backwards' : 'forwards'
     update(currently_traveling_route_direction: new_direction)
-    advance_along_route
+    advance_along_route(retreating: true)
   end
 
   def retreat_randomly

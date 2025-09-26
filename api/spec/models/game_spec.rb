@@ -123,5 +123,27 @@ RSpec.describe Game, type: :model do
       expect(world.battles.count).to eq(1)
       expect(world.battles.where(state: 'completed').count).to eq(1)
     end
+
+    it 'should clash with multiple armies sequentially if stacked on a tile' do
+      world = game_with_story.world
+      army1 = Army.spawn_with_generals(
+        { world: world, kingdom: world.kingdoms.where(is_player_kingdom: false).first, x_coord: 0, y_coord: 0 },
+        [General.create(world: world, kingdom: world.kingdoms.first)]
+      )
+      Army.spawn_with_generals(
+        { world: world, kingdom: world.kingdoms.where(is_player_kingdom: false).first, x_coord: 0, y_coord: 0 },
+        [General.create(world: world, kingdom: world.kingdoms.first)]
+      )
+      army3 = Army.spawn_with_generals(
+        { world: world, kingdom: world.kingdoms.where(is_player_kingdom: false).last, x_coord: 0, y_coord: 2 },
+        [General.create(world: world, kingdom: world.kingdoms.last)]
+      )
+      journey = army3.current_location.get_journey_to(army1.current_location)
+      army3.assign_to_journey(journey)
+      expect(world.battles.count).to eq(0)
+      army3.advance_along_route
+      army3.advance_along_route(forced_winner: army3.kingdom)
+      expect(world.battles.count).to eq(2)
+    end
   end
 end
