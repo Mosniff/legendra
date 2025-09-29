@@ -184,23 +184,28 @@ class Army < ApplicationRecord
   end
 
   def check_for_clash(forced_winner: nil)
-    while (opposing_army = world.armies.where.not(kingdom_id: kingdom_id)
-                                   .where(x_coord: x_coord, y_coord: y_coord)
-                                   .first)
+    while world.game.game_state != 'awaiting_player' &&
+          (opposing_army = world.armies.where.not(kingdom_id: kingdom_id)
+                                       .where(x_coord: x_coord, y_coord: y_coord)
+                                       .first)
       run_battle(opposing_army, forced_winner: forced_winner)
     end
   end
 
   def run_battle(opposing_army, forced_winner: nil)
-    battle = Battle.create!(
-      side_a: kingdom,
-      side_b: opposing_army.kingdom,
-      tile: tile,
-      world: world,
-      turn: world.game.turn
-    )
-    battle.resolve_battle(self, opposing_army, forced_winner: forced_winner)
-    # TODO: run battle here, OR set to needs player input if player controlled army involved
+    if kingdom.is_player_kingdom || opposing_army.kingdom.is_player_kingdom
+      world.game.update(game_state: 'awaiting_player')
+    else
+      battle = Battle.create!(
+        side_a: kingdom,
+        side_b: opposing_army.kingdom,
+        tile: tile,
+        world: world,
+        turn: world.game.turn
+      )
+      battle.resolve_battle(self, opposing_army, forced_winner: forced_winner)
+      # TODO: run battle here, OR set to needs player input if player controlled army involved
+    end
   end
 
   def retreat_along_route

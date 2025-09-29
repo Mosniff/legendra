@@ -6,7 +6,7 @@ class Game < ApplicationRecord
   validates :slot, presence: true, inclusion: { in: 0..9 }
   validates :slot, uniqueness: { scope: :user_id }
 
-  GAME_STATES = %w[story_choice orders_phase resolving_movement].freeze
+  GAME_STATES = %w[story_choice orders_phase resolving_movement awaiting_player].freeze
   validates :game_state, inclusion: { in: GAME_STATES }
 
   has_one :world, dependent: :destroy
@@ -30,6 +30,7 @@ class Game < ApplicationRecord
   private
 
   def advance_turn
+    self.game_state = 'orders_phase'
     self.turn += 1
     save
   end
