@@ -177,16 +177,16 @@ RSpec.describe Game, type: :model do
       end
 
       it 'should save the awaited event when waiting for player input' do
-        expect(game_with_story.awaited_event).to be(nil)
+        expect(game_with_story.awaited_clash).to be(nil)
         game_with_story.attempt_advance_turn
-        expect(game_with_story.awaited_event).to be_a(Battle)
+        expect(game_with_story.awaited_clash).to be_a(Clash)
       end
 
       it 'can be resumed after player input' do
         game_with_story.attempt_advance_turn
         expect(game_with_story.game_state).to eq('awaiting_player')
-        # player resumes
-        expect(world.battles.count).to eq(1)
+        game_with_story.player_resume_turn
+        expect(game_with_story.world.battles.count).to eq(1)
         expect(game_with_story.game_state).to eq('orders_phase')
         expect(game_with_story.turn).to eq(2)
       end

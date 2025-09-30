@@ -38,4 +38,15 @@ class Battle < ApplicationRecord
     # TODO: implement actual battle logic
     [army1, army2].sample
   end
+
+  def self.run_battle_from_clash(clash)
+    battle = Battle.create!(
+      side_a: clash.side_a_army.kingdom,
+      side_b: clash.side_b_army.kingdom,
+      tile: clash.tile,
+      world: clash.world,
+      turn: clash.world.game.turn
+    )
+    battle.resolve_battle(clash.side_a_army, clash.side_b_army, forced_winner: clash.forced_winner)
+  end
 end

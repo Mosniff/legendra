@@ -11,7 +11,7 @@ class Game < ApplicationRecord
 
   has_one :world, dependent: :destroy
   has_one :story, through: :world
-  has_one :awaited_event, class_name: 'Battle', foreign_key: 'game_id', dependent: :nullify
+  has_one :awaited_clash, class_name: 'Clash', foreign_key: 'game_id', dependent: :nullify
 
   after_create :create_world
   before_save :ensure_single_active_game
@@ -32,9 +32,12 @@ class Game < ApplicationRecord
   def player_resume_turn
     raise 'Game state must be awaiting_player to resume turn.' if game_state != 'awaiting_player'
 
-    # update(game_state: 'resolving_movement')
-    # world.armies_to_move.first.advance_along_route while game_state == 'resolving_movement' && world.armies_to_move.any?
-    # advance_turn if game_state == 'resolving_movement' && world.armies_to_move.empty?
+    update(game_state: 'resolving_movement')
+    awaited_clash.attempt_to_resolve_clash(player_initiated: true)
+    self.awaited_clash = nil
+    save
+
+    attempt_advance_turn
   end
 
   private

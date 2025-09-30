@@ -6,6 +6,7 @@ class Army < ApplicationRecord
   belongs_to :kingdom
   belongs_to :world
   belongs_to :currently_traveling_route, class_name: 'Route', foreign_key: 'route_id', optional: true
+  belongs_to :clash, optional: true
 
   has_many :generals, as: :assignable, after_remove: :destroy_if_empty
 
@@ -188,23 +189,7 @@ class Army < ApplicationRecord
           (opposing_army = world.armies.where.not(kingdom_id: kingdom_id)
                                        .where(x_coord: x_coord, y_coord: y_coord)
                                        .first)
-      run_battle(opposing_army, forced_winner: forced_winner)
-    end
-  end
-
-  def run_battle(opposing_army, forced_winner: nil)
-    battle = Battle.create!(
-      side_a: kingdom,
-      side_b: opposing_army.kingdom,
-      tile: tile,
-      world: world,
-      turn: world.game.turn
-    )
-    if kingdom.is_player_kingdom || opposing_army.kingdom.is_player_kingdom
-      world.game.update(game_state: 'awaiting_player', awaited_event: battle)
-    else
-      battle.resolve_battle(self, opposing_army, forced_winner: forced_winner)
-      # TODO: run battle here, OR set to needs player input if player controlled army involved
+      Clash.initiate_clash(self, opposing_army, tile, forced_winner: forced_winner)
     end
   end
 
