@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_22_155543) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_30_084917) do
   create_table "armies", force: :cascade do |t|
     t.integer "kingdom_id", null: false
     t.integer "world_id", null: false
@@ -37,6 +37,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_22_155543) do
     t.integer "winner_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "game_id"
+    t.index ["game_id"], name: "index_battles_on_game_id"
     t.index ["side_a_id"], name: "index_battles_on_side_a_id"
     t.index ["side_b_id"], name: "index_battles_on_side_b_id"
     t.index ["tile_id"], name: "index_battles_on_tile_id"
@@ -180,6 +182,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_22_155543) do
   add_foreign_key "armies", "kingdoms"
   add_foreign_key "armies", "routes"
   add_foreign_key "armies", "worlds"
+  add_foreign_key "battles", "games"
   add_foreign_key "battles", "kingdoms", column: "side_a_id"
   add_foreign_key "battles", "kingdoms", column: "side_b_id"
   add_foreign_key "battles", "kingdoms", column: "winner_id"

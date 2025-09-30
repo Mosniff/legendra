@@ -149,28 +149,47 @@ RSpec.describe Game, type: :model do
       expect(world.battles.count).to eq(2)
     end
 
-    it 'should pause turn resolution when player input is required' do
-      world = game_with_story.world
-      player_kingdom = world.player_kingdom
-      ai_kingdom = world.kingdoms.where(is_player_kingdom: false).first
-      army1 = Army.spawn_with_generals(
-        { world: world, kingdom: ai_kingdom, x_coord: 0, y_coord: 0 },
-        [General.create(world: world, kingdom: ai_kingdom)]
-      )
-      army2 = Army.spawn_with_generals(
-        { world: world, kingdom: player_kingdom, x_coord: 0, y_coord: 2 },
-        [General.create(world: world, kingdom: player_kingdom)]
-      )
-      journey1 = army1.current_location.get_journey_to(army2.current_location)
-      journey2 = army2.current_location.get_journey_to(army1.current_location)
-      army1.assign_to_journey(journey1)
-      army2.assign_to_journey(journey2)
+    describe 'Player Input' do
+      before do
+        world = game_with_story.world
+        player_kingdom = world.player_kingdom
+        ai_kingdom = world.kingdoms.where(is_player_kingdom: false).first
+        army1 = Army.spawn_with_generals(
+          { world: world, kingdom: ai_kingdom, x_coord: 0, y_coord: 0 },
+          [General.create(world: world, kingdom: ai_kingdom)]
+        )
+        army2 = Army.spawn_with_generals(
+          { world: world, kingdom: player_kingdom, x_coord: 0, y_coord: 2 },
+          [General.create(world: world, kingdom: player_kingdom)]
+        )
+        journey1 = army1.current_location.get_journey_to(army2.current_location)
+        journey2 = army2.current_location.get_journey_to(army1.current_location)
+        army1.assign_to_journey(journey1)
+        army2.assign_to_journey(journey2)
+      end
 
-      expect(game_with_story.turn).to eq(1)
-      expect(game_with_story.game_state).to eq('orders_phase')
-      game_with_story.attempt_advance_turn
-      expect(game_with_story.game_state).to eq('awaiting_player')
-      expect(game_with_story.turn).to eq(1)
+      it 'should pause turn resolution when player input is required' do
+        expect(game_with_story.turn).to eq(1)
+        expect(game_with_story.game_state).to eq('orders_phase')
+        game_with_story.attempt_advance_turn
+        expect(game_with_story.game_state).to eq('awaiting_player')
+        expect(game_with_story.turn).to eq(1)
+      end
+
+      it 'should save the awaited event when waiting for player input' do
+        expect(game_with_story.awaited_event).to be(nil)
+        game_with_story.attempt_advance_turn
+        expect(game_with_story.awaited_event).to be_a(Battle)
+      end
+
+      it 'can be resumed after player input' do
+        game_with_story.attempt_advance_turn
+        expect(game_with_story.game_state).to eq('awaiting_player')
+        # player resumes
+        expect(world.battles.count).to eq(1)
+        expect(game_with_story.game_state).to eq('orders_phase')
+        expect(game_with_story.turn).to eq(2)
+      end
     end
   end
 end

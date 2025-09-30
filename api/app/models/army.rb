@@ -193,16 +193,16 @@ class Army < ApplicationRecord
   end
 
   def run_battle(opposing_army, forced_winner: nil)
+    battle = Battle.create!(
+      side_a: kingdom,
+      side_b: opposing_army.kingdom,
+      tile: tile,
+      world: world,
+      turn: world.game.turn
+    )
     if kingdom.is_player_kingdom || opposing_army.kingdom.is_player_kingdom
-      world.game.update(game_state: 'awaiting_player')
+      world.game.update(game_state: 'awaiting_player', awaited_event: battle)
     else
-      battle = Battle.create!(
-        side_a: kingdom,
-        side_b: opposing_army.kingdom,
-        tile: tile,
-        world: world,
-        turn: world.game.turn
-      )
       battle.resolve_battle(self, opposing_army, forced_winner: forced_winner)
       # TODO: run battle here, OR set to needs player input if player controlled army involved
     end

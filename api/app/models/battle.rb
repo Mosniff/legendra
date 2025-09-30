@@ -4,6 +4,7 @@ class Battle < ApplicationRecord
   belongs_to :side_b, class_name: 'Kingdom', foreign_key: 'side_b_id'
   belongs_to :tile
   belongs_to :winner, class_name: 'Kingdom', optional: true
+  belongs_to :game, optional: true
 
   BATTLE_STATES = %w[awaiting_resolution completed].freeze
   validates :state, inclusion: { in: BATTLE_STATES }
