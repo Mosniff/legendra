@@ -2,6 +2,7 @@ class Kingdom < ApplicationRecord
   belongs_to :world
   has_many :generals, dependent: :destroy
   has_many :garrison, dependent: :destroy
+  has_many :armies, dependent: :destroy
 
   validate :only_one_player_kingdom_per_world
 
