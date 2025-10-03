@@ -23,7 +23,7 @@ export const ScreenContainer = () => {
   }
 
   return (
-    <div className="bg-amber-500 w-full h-full p-2">
+    <div className="bg-amber-500 w-full flex-grow p-2">
       {isLoadingUser && <div>Loading...</div>}
       {!isLoadingUser && (
         <>

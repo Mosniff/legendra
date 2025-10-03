@@ -42,7 +42,7 @@ export const GameMenuScreen = ({}: {}) => {
             Back to Game Select
           </button>
           {game.gameState === "story_choice" && <StoryChoice game={game} />}
-          {game.gameState === "in_progress" && game.world && (
+          {game.gameState !== "story_choice" && game.world && (
             <>
               <WorldMap world={game.world} />
               <div className="flex gap-2">

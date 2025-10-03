@@ -18,18 +18,9 @@ export const AppContainer = () => {
   }, []);
 
   return (
-    <div className="flex w-full h-full items-center justify-center p-12">
-      <div
-        style={{
-          width: "800px",
-          maxWidth: "800px",
-          height: "400px",
-          maxHeight: "400px",
-        }}
-      >
-        <AppHeader />
-        <ScreenContainer />
-      </div>
+    <div className="h-screen w-full flex flex-col items-center">
+      <AppHeader />
+      <ScreenContainer />
     </div>
   );
 };

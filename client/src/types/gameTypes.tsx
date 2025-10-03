@@ -7,7 +7,11 @@ export type Game = {
   turn: number;
 };
 
-export type GameState = "story_choice" | "in_progress";
+export type GameState =
+  | "story_choice"
+  | "orders_phase"
+  | "resolving_movement"
+  | "awaiting_player";
 
 export type GameWorld = {
   id: string;
