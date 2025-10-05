@@ -2,11 +2,11 @@ import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppContainer } from "@/components/containers/AppContainer";
 import { AuthContextProvider } from "@/context/AuthContext";
-import * as userService from "@/services/UserService";
+import { userService } from "@/services/UserService";
 import { AppContextProvider } from "@/context/AppContext";
-import * as gameService from "@/services/GameService";
-import * as castleService from "@/services/CastleService";
-import * as armyService from "@/services/ArmyService";
+import { gameService } from "@/services/GameService";
+import { castleService } from "@/services/CastleService";
+import { armyService } from "@/services/ArmyService";
 
 const queryClient = new QueryClient();
 

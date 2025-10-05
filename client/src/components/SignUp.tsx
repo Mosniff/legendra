@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { signUp } from "@/services/UserService";
+import { userService } from "@/services/UserService";
 
 export const SignUp = () => {
   const [email, setEmail] = useState<string>();
@@ -51,7 +51,7 @@ export const SignUp = () => {
         }
         onClick={() => {
           if (email && password) {
-            signUp({ user: { email: email, password: password } });
+            userService.signUp({ user: { email: email, password: password } });
           }
         }}
       >
