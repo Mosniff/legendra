@@ -1,24 +1,11 @@
 import { WorldMapTile } from "@/components/WorldMapTile";
-import type { GameWorld } from "@/types/gameTypes";
+import type { MapTile } from "@/types/gameTypes";
 
-export const WorldMapRow = ({
-  columnNumbers,
-  rowNumber,
-  world,
-}: {
-  columnNumbers: number[];
-  rowNumber: number;
-  world: GameWorld;
-}) => {
+export const WorldMapRow = ({ tiles }: { tiles: MapTile[] }) => {
   return (
     <div className="flex">
-      {columnNumbers.map((columnNumber) => (
-        <WorldMapTile
-          key={columnNumber}
-          rowNumber={rowNumber}
-          columnNumber={columnNumber}
-          world={world}
-        />
+      {tiles.map((tile) => (
+        <WorldMapTile key={tile.id} {...tile} />
       ))}
     </div>
   );

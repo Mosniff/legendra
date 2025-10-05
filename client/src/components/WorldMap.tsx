@@ -1,27 +1,12 @@
-import type { GameWorld } from "@/types/gameTypes";
+import type { GameMap } from "@/types/gameTypes";
 import { WorldMapRow } from "@/components/WorldMapRow";
 
-export const WorldMap = ({ world }: { world: GameWorld }) => {
-  const rowNumbers = Array.from(
-    { length: world.gameMap.height || 0 },
-    (_, index) => index
-  );
-
-  const columnNumbers = Array.from(
-    { length: world.gameMap.height || 0 },
-    (_, index) => index
-  );
-
+export const WorldMap = ({ height, tiles }: GameMap) => {
   return (
-    <div>
-      {rowNumbers.reverse().map((rowNumber) => (
-        <WorldMapRow
-          key={rowNumber}
-          rowNumber={rowNumber}
-          columnNumbers={columnNumbers}
-          world={world}
-        />
+    <>
+      {Array.from({ length: height }).map((_, i) => (
+        <WorldMapRow key={i} tiles={tiles.filter((tile) => tile.yCoord == i)} />
       ))}
-    </div>
+    </>
   );
 };

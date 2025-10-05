@@ -1,7 +1,7 @@
 import { useAppContext } from "@/context/AppContext";
 import { useGameQuery } from "@/services/queryHooks/useGameQuery";
 import { AppContextActionTypes } from "@/types/appContextTypes";
-import { WorldMap } from "@/components/WorldMap";
+import { WorldMap } from "@/components/xWorldMap";
 import { StoryChoice } from "@/components/StoryChoice";
 import { KingdomsList } from "@/components/KingdomsList";
 import { CastlesList } from "@/components/CastlesList";

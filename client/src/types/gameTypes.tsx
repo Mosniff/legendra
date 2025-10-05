@@ -37,6 +37,9 @@ export type MapTile = {
   yCoord: number;
   terrain: string;
   routeTile: boolean;
+  castle?: Castle | null;
+  town?: Town | null;
+  // TODO remove
   castleId?: string | null;
   townId?: string | null;
 };
