@@ -6,7 +6,8 @@
       "@/context/*": ["./context/*"],
       "@/types/*": ["./types/*"],
       "@/reducers/*": ["./context/reducers/*"],
-      "@/services/*": ["./services/*"]
+      "@/services/*": ["./services/*"],
+      "@/tests/*": ["./tests/*"]
     },
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2020",
