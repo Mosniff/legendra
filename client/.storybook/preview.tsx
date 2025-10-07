@@ -1,11 +1,11 @@
 import "../src/App.css";
 import type { Preview } from "@storybook/react-vite";
 import { AuthContextProvider } from "../src/context/AuthContext";
-import * as userService from "../src/services/UserService";
+import { userService } from "../src/services/UserService";
 import { AppContextProvider } from "../src/context/AppContext";
-import * as gameService from "../src/services/GameService";
-import * as castleService from "../src/services/CastleService";
-import * as armyService from "../src/services/ArmyService";
+import { gameService } from "../src/services/GameService";
+import { castleService } from "../src/services/CastleService";
+import { armyService } from "../src/services/ArmyService";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();

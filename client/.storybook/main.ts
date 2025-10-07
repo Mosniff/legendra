@@ -19,12 +19,7 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       resolve: {
         alias: {
-          "@/components": resolve(__dirname, "../src/components"),
-          "@/context": resolve(__dirname, "../src/context"),
-          "@/types": resolve(__dirname, "../src/types"),
-          "@/reducers": resolve(__dirname, "../src/context/reducers"),
-          "@/services": resolve(__dirname, "../src/services"),
-          "@/tests": resolve(__dirname, "../src/tests"),
+          "@": resolve(__dirname, "../src"),
         },
       },
     });
