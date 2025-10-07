@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { WorldMapScreen } from "./WorldMapScreen";
+import { WorldMapScreenPresentation } from "./WorldMapScreen";
 import { ScreenContainer } from "@/components/containers/ScreenContainer";
+import { dummyGame } from "@/tests/dummyData/game";
 
 const meta = {
   title: "Screens/WorldMap",
-  component: WorldMapScreen,
+  component: WorldMapScreenPresentation,
   parameters: {
     layout: "fullscreen",
   },
@@ -17,9 +18,11 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof WorldMapScreen>;
+} satisfies Meta<typeof WorldMapScreenPresentation>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: { game: dummyGame(), isLoadingGame: false },
+};

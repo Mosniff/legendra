@@ -65,8 +65,8 @@ export const dummyGameMap: (options: {
 };
 
 export const dummyGameMapSmall = dummyGameMap({
-  height: 10,
-  width: 10,
+  height: 20,
+  width: 20,
   overrideTiles: [
     dummyMapTile({ xCoord: 0, yCoord: 0, terrain: "snow", withCastle: true }),
     dummyMapTile({
